@@ -8,7 +8,7 @@ apt -y install chrony
 timedatectl set-ntp true
 systemctl enable chronyd && systemctl restart chronyd
 systemctl enable chrony && systemctl restart chrony
-timedatectl set-timezone Asia/Jakarta
+timedatectl set-timezone Asia/Kuala_Lumpur
 chronyc sourcestats -v
 chronyc tracking -v
 date
@@ -30,7 +30,7 @@ cat> /etc/v2ray/config.json << END
   },
   "inbounds": [
     {
-      "port": 8443,
+      "port": 31291,
       "protocol": "vmess",
       "settings": {
         "clients": [
@@ -53,7 +53,7 @@ cat> /etc/v2ray/config.json << END
           ]
         },
         "wsSettings": {
-          "path": "/v2ray",
+          "path": "/vmess",
           "headers": {
             "Host": ""
           }
@@ -141,7 +141,7 @@ cat> /etc/v2ray/none.json << END
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-          "path": "/v2ray",
+          "path": "/vnone",
           "headers": {
             "Host": ""
           }
@@ -215,7 +215,7 @@ cat> /etc/v2ray/vless.json << END
   },
   "inbounds": [
     {
-      "port": 2096,
+      "port": 31291,
       "protocol": "vless",
       "settings": {
         "clients": [
@@ -238,7 +238,7 @@ cat> /etc/v2ray/vless.json << END
           ]
         },
         "wsSettings": {
-          "path": "/v2ray",
+          "path": "/vless",
           "headers": {
             "Host": ""
           }
@@ -311,7 +311,7 @@ cat> /etc/v2ray/vnone.json << END
   },
   "inbounds": [
     {
-      "port": 8880,
+      "port": 880,
       "protocol": "vless",
       "settings": {
         "clients": [
@@ -325,7 +325,7 @@ cat> /etc/v2ray/vnone.json << END
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-          "path": "/v2ray",
+          "path": "/vlnone",
           "headers": {
             "Host": ""
           }
@@ -480,15 +480,15 @@ cat> /etc/v2ray/trojan.json <<END
   }
 }
 END
-iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 8443 -j ACCEPT
-iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 2096 -j ACCEPT
+iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 31291 -j ACCEPT
+iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 31291 -j ACCEPT
 iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 2052 -j ACCEPT
-iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 8880 -j ACCEPT
+iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 880 -j ACCEPT
 iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
-iptables -I INPUT -m state --state NEW -m udp -p udp --dport 8443 -j ACCEPT
-iptables -I INPUT -m state --state NEW -m udp -p udp --dport 2096 -j ACCEPT
+iptables -I INPUT -m state --state NEW -m udp -p udp --dport 31291 -j ACCEPT
+iptables -I INPUT -m state --state NEW -m udp -p udp --dport 31291 -j ACCEPT
 iptables -I INPUT -m state --state NEW -m udp -p udp --dport 2052 -j ACCEPT
-iptables -I INPUT -m state --state NEW -m udp -p udp --dport 8880 -j ACCEPT
+iptables -I INPUT -m state --state NEW -m udp -p udp --dport 880 -j ACCEPT
 iptables -I INPUT -m state --state NEW -m udp -p udp --dport 80 -j ACCEPT
 iptables-save > /etc/iptables.up.rules
 iptables-restore -t < /etc/iptables.up.rules
