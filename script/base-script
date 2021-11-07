@@ -1,5 +1,5 @@
 #!/bin/bash
-TITLE=' =•= JuanScript =•= ';
+TITLE=' =•= VoltScript =•= ';
 GRN1='\e[32m [\e[0m1\e[32m]\e[0m';
 GRN2='\e[32m [\e[0m2\e[32m]\e[0m';
 GRN3='\e[32m [\e[0m3\e[32m]\e[0m';
