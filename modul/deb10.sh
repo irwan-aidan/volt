@@ -129,13 +129,10 @@ echo "neofetch -p -A Android" >> .profile
 echo "echo 'DARKNET PREM SCRIPT '" >> .profile
 echo "echo 't.me/cyberbossz '" >> .profile
 
-sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
-deb http://repo.pritunl.com/stable/apt buster main
-EOF
-sudo apt-get install dirmngr -y
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-sudo apt-get update -y
-sudo apt-get install pritunl-client-electron -y
+echo "deb http://build.openvpn.net/debian/openvpn/stable $(lsb_release -sc) main" >/etc/apt/sources.list.d/openvpn.list && apt-key del E158C569 && wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add -
+wget -qO security-openvpn-net.asc "https://keys.openpgp.org/vks/v1/by-fingerprint/F554A3687412CFFEBDEFE0A312F5F7B42F2B01E7" && gpg --import security-openvpn-net.asc
+apt-get update -y
+apt-get install openvpn -y
 
 # Removing some duplicated sshd server configs
 rm -f /etc/ssh/sshd_config*
@@ -284,8 +281,8 @@ cipher none
 ncp-disable
 auth none
 comp-lzo
+comp-noadapt
 tun-mtu 1500
-reneg-sec 0
 plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
 verify-client-cert none
 username-as-common-name
@@ -293,15 +290,16 @@ max-clients 4000
 topology subnet
 server 192.168.1.0 255.255.255.0
 push "redirect-gateway def1"
-keepalive 5 60
 status /etc/openvpn/tcp_stats.log
 log /etc/openvpn/tcp.log
 verb 2
 script-security 2
-socket-flags TCP_NODELAY
-push "socket-flags TCP_NODELAY"
-push "dhcp-option DNS 8.8.4.4"
+keepalive 60 180
+ping-timer-rem
+reneg-sec 0
+tcp-nodelay
 push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
 myOpenVPNconf1
 cat <<'myOpenVPNconf2' > /etc/openvpn/server_tcp1.conf
 port MyOvpnPort2
@@ -319,8 +317,8 @@ cipher none
 ncp-disable
 auth none
 comp-lzo
+comp-noadapt
 tun-mtu 1500
-reneg-sec 0
 plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
 verify-client-cert none
 username-as-common-name
@@ -328,15 +326,16 @@ max-clients 4000
 topology subnet
 server 192.168.2.0 255.255.255.0
 push "redirect-gateway def1"
-keepalive 5 60
 status /etc/openvpn/tcp_stats.log
 log /etc/openvpn/tcp.log
 verb 2
 script-security 2
-socket-flags TCP_NODELAY
-push "socket-flags TCP_NODELAY"
-push "dhcp-option DNS 8.8.4.4"
+keepalive 60 180
+ping-timer-rem
+reneg-sec 0
+tcp-nodelay
 push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
 myOpenVPNconf2
  cat <<'myOpenVPNconf3' > /etc/openvpn/server_udp.conf
 port MyOvpnPort3
@@ -354,8 +353,8 @@ cipher none
 ncp-disable
 auth none
 comp-lzo
+comp-noadapt
 tun-mtu 1500
-reneg-sec 0
 plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
 verify-client-cert none
 username-as-common-name
@@ -363,15 +362,16 @@ max-clients 4000
 topology subnet
 server 192.168.3.0 255.255.255.0
 push "redirect-gateway def1"
-keepalive 5 60
 status /etc/openvpn/tcp_stats.log
 log /etc/openvpn/tcp.log
 verb 2
 script-security 2
-socket-flags TCP_NODELAY
-push "socket-flags TCP_NODELAY"
-push "dhcp-option DNS 8.8.4.4"
+keepalive 60 180
+ping-timer-rem
+reneg-sec 0
+tcp-nodelay
 push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
 myOpenVPNconf3
  cat <<'myOpenVPNconf4' > /etc/openvpn/server_udp1.conf
 port MyOvpnPort4
@@ -389,8 +389,8 @@ cipher none
 ncp-disable
 auth none
 comp-lzo
+comp-noadapt
 tun-mtu 1500
-reneg-sec 0
 plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
 verify-client-cert none
 username-as-common-name
@@ -398,15 +398,16 @@ max-clients 4000
 topology subnet
 server 192.168.4.0 255.255.255.0
 push "redirect-gateway def1"
-keepalive 5 60
 status /etc/openvpn/tcp_stats.log
 log /etc/openvpn/tcp.log
 verb 2
 script-security 2
-socket-flags TCP_NODELAY
-push "socket-flags TCP_NODELAY"
-push "dhcp-option DNS 8.8.4.4"
+keepalive 60 180
+ping-timer-rem
+reneg-sec 0
+tcp-nodelay
 push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
 myOpenVPNconf4
 cat <<'EOF7'> /etc/openvpn/ca.crt
 -----BEGIN CERTIFICATE-----
@@ -737,6 +738,9 @@ remote $MYIP 1194
 remote-cert-tls server
 tun-mtu 1500
 mssfix 1450
+ping-restart 0
+ping-timer-rem
+reneg-sec 0
 auth-user-pass
 auth none
 cipher none
@@ -756,6 +760,9 @@ remote $MYIP 465
 remote-cert-tls server
 tun-mtu 1500
 mssfix 1450
+ping-restart 0
+ping-timer-rem
+reneg-sec 0
 auth-user-pass
 auth none
 cipher none
@@ -775,6 +782,9 @@ remote $MYIP 2200
 remote-cert-tls server
 tun-mtu 1500
 mssfix 1450
+ping-restart 0
+ping-timer-rem
+reneg-sec 0
 auth-user-pass
 auth none
 cipher none
@@ -794,6 +804,9 @@ remote $MYIP 2500
 remote-cert-tls server
 tun-mtu 1500
 mssfix 1450
+ping-restart 0
+ping-timer-rem
+reneg-sec 0
 auth-user-pass
 auth none
 cipher none
