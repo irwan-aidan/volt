@@ -31,9 +31,9 @@ echo -e "$merah 13$putih. Customize your banner $biru(banner)\E[0m"
 echo -e ""
 echo -e "\e[46mTo exit the menu press CTRL + C \E[0m"
 echo -e "$putih━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\E[0m"
-read -p "   Select from options [1-13]: " menu
+read -p "   Select from options [1-13]: " Menu
 echo -e ""
-case $menu in
+case $Menu in
 		1)
 		clear
 		menu-vpn
