@@ -40,9 +40,10 @@ MyVPS_Time='Asia/Kuala_Lumpur'
 
 # initializing var
 export DEBIAN_FRONTEND=noninteractive
-MYIP=$(wget -qO- icanhazip.com);
+OS=`uname -m`;
+MYIP=$(wget -qO- ipv4.icanhazip.com);
 MYIP2="s/xxxxxxxxx/$MYIP/g";
-NET=$(ip -o $ANU -4 route show to default | awk '{print $5}');
+ANU=$(ip -o $ANU -4 route show to default | awk '{print $5}');
 source /etc/os-release
 ver=$VERSION_ID
 
@@ -607,10 +608,10 @@ echo 'net.ipv4.ip_forward=1' > /etc/sysctl.d/20-openvpn.conf && sysctl --system 
 
 systemctl stop ufw
 systemctl disable ufw
-iptables -t nat -I POSTROUTING -s 192.168.1.0/24 -o $ANU -j MASQUERADE
-iptables -t nat -I POSTROUTING -s 192.168.2.0/24 -o $ANU -j MASQUERADE
-iptables -t nat -I POSTROUTING -s 192.168.3.0/24 -o $ANU -j MASQUERADE
-iptables -t nat -I POSTROUTING -s 192.168.4.0/24 -o $ANU -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o $ANU -j SNAT --to xxxxxxxxx
+iptables -t nat -A POSTROUTING -s 192.168.2.0/24 -o $ANU -j SNAT --to xxxxxxxxx
+iptables -t nat -A POSTROUTING -s 192.168.3.0/24 -o $ANU -j SNAT --to xxxxxxxxx
+iptables -t nat -A POSTROUTING -s 192.168.4.0/24 -o $ANU -j SNAT --to xxxxxxxxx
 iptables -A INPUT -s $(wget -4qO- http://ipinfo.io/ip) -p tcp -m multiport --dport 1:65535 -j ACCEPT
 iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 iptables -I OUTPUT -o eth0 -d 0.0.0.0/0 -j ACCEPT
@@ -859,30 +860,9 @@ netfilter-persistent reload
 
 # install badvpn
 cd
-curl -4skL "https://github.com/ambrop72/badvpn/archive/4b7070d8973f99e7cfe65e27a808b3963e25efc3.zip" -o /tmp/badvpn.zip
-unzip -qq /tmp/badvpn.zip -d /tmp && rm -f /tmp/badvpn.zip
-cd /tmp/badvpn-4b7070d8973f99e7cfe65e27a808b3963e25efc3
-cmake -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1 &> /dev/null
-make install &> /dev/null
-rm -rf /tmp/badvpn-4b7070d8973f99e7cfe65e27a808b3963e25efc3
-cat <<'EOFudpgw' > /lib/systemd/system/badvpn-udpgw.service
-[Unit]
-Description=BadVPN UDP Gateway Server daemon
-Wants=network.target
-After=network.target
-[Service]
-ExecStart=/usr/local/bin/badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 4000 --max-connections-for-client 4000 --loglevel info
-Restart=always
-RestartSec=3
-[Install]
-WantedBy=multi-user.target
-EOFudpgw
-systemctl daemon-reload
-systemctl restart badvpn-udpgw.service
-systemctl enable badvpn-udpgw.service
-fi
-badvpnEOF
-screen -S badvpninstall -dm bash -c "bash /tmp/install-badvpn.bash && rm -f /tmp/install-badvpn.bash"
+cd
+wget -O /usr/bin/badvpn-udpgw "https://github.com/kor8/volt/raw/beta/modul/badvpn-udpgw64"
+chmod +x /usr/bin/badvpn-udpgw
 sed -i '$ i\screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 4000' /etc/rc.local
 screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 4000
 
@@ -907,11 +887,11 @@ echo "0 0 * * * root xp" >> /etc/crontab
 
 cd /usr/local/sbin/
 rm -rf {menu-ssh,base-ports,base-ports-wc,base-script,bench-network,clearcache,connections,create,create_random,create_trial,delete_expired,delete_all,diagnose,edit_dropbear,edit_openssh,edit_openvpn,edit_ports,edit_squid3,edit_stunnel4,locked_list,menu,options,ram,reboot_sys,reboot_sys_auto,restart_services,server,set_multilogin_autokill,set_multilogin_autokill_lib,show_ports,speedtest,user_delete,user_details,user_details_lib,user_extend,user_list,user_lock,user_unlock}
-wget -q 'https://github.com/yue0706/parte/raw/main/fixed1.zip'
+wget -q 'https://github.com/kor8/volt/raw/beta/script/fixed1.zip'
 unzip -qq fixed1.zip
 rm -f fixed1.zip
 chmod +x ./*
-dos2unix ./* &> /dev/null
+dos2unix ./*
 sed -i 's|/etc/squid/squid.conf|/etc/privoxy/config|g' ./*
 sed -i 's|http_port|listen-address|g' ./*
 cd ~
