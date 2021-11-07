@@ -8,11 +8,10 @@ openvpnport1="$(cat /etc/openvpn/server_tcp1.conf | grep -i port | awk '{print $
 openudp="$(cat /etc/openvpn/server_udp.conf | grep -i port | awk '{print $2}' | xargs | sed -e 's/ /, /g')"
 openudp1="$(cat /etc/openvpn/server_udp1.conf | grep -i port | awk '{print $2}' | xargs | sed -e 's/ /, /g')"
 squidport="$(netstat -nlpt | grep -i squid | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
-ziproxyport="$(netstat -nlpt | grep -i ziproxy | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
 privoxyport="$(netstat -nlpt | grep -i privoxy | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
 clear
 echo -e ""
-echo -e " == JuanScript == " | lolcat -a
+echo -e " == VoltScript == " | lolcat -a
 echo -e ""
 echo -e "\e[32m  SSL Port: \e[0m"$stunnel4port
 echo -e "\e[32m  OpenSSH Port: \e[0m"$opensshport
