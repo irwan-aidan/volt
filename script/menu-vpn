@@ -27,11 +27,11 @@ echo -e "$merah 13$putih. Exit/Menu $biru(Go Main Menu)"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "\e[46mTo exit the menu press CTRL + C \E[0m"
 echo -e "$putih━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\E[0m"
-read -rp "  Please Enter The Number [1-13] : " -e menu-vpn
+read -rp "  Please Enter The Number [1-13] : " -e Vpn
 echo -e "\n\n"
 sleep 1
 clear
-case $menu-vpn in
+case $Vpn in
 		1)
 		clear
 		create
