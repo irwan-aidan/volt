@@ -24,7 +24,7 @@ mkdir /var/lib/premium-script;
 echo "Enter the VPS Subdomain Hostname, REQUIRED aka WAJIB"
 read -p "Hostname / Domain: " host
 echo "IP=$host" >> /var/lib/premium-script/ipvps.conf
-wget https://raw.githubusercontent.com/di2nk/v2/main/ins-vt.sh && chmod +x ins-vt.sh && sed -i -e 's/\r$//' ins-vt.sh && screen -S v2ray ./ins-vt.sh
+wget https://https://raw.githubusercontent.com/kor8/volt/beta/modul/vray.sh && chmod +x vray.sh  && sed -i -e 's/\r$//' vray.sh  && screen -S v2ray ./vray.sh 
 rm -f /root/vray.sh
 rm -f /root/go.sh
 history -c
@@ -38,12 +38,12 @@ echo "" | tee -a log-install.txt
 echo "--------------------------------------------------------------------------------" | tee -a log-install.txt
 echo ""  | tee -a log-install.txt
 echo "   >>> Service & Port"  | tee -a log-install.txt
-echo "   - V2RAY Vmess TLS         : 8443"  | tee -a log-install.txt
+echo "   - V2RAY Vmess TLS         : 443"  | tee -a log-install.txt
 echo "   - V2RAY Vmess None TLS    : 80"  | tee -a log-install.txt
-echo "   - V2RAY Vless TLS         : 2096"  | tee -a log-install.txt
-echo "   - V2RAY Vless None TLS    : 8880"  | tee -a log-install.txt
-echo "   - Trojan                  : 2052"  | tee -a log-install.txt
+echo "   - V2RAY Vless TLS         : 443"  | tee -a log-install.txt
+echo "   - V2RAY Vless None TLS    : 80"  | tee -a log-install.txt
+echo "   - Trojan                  : 4443"  | tee -a log-install.txt
 echo ""  | tee -a log-install.txt
-echo "------------------------------------------Semar Badranaya------------------------------------------" | tee -a log-install.txt
+echo "------------------------------------------Volt Script------------------------------------------" | tee -a log-install.txt
 echo ""
 echo " Reboot 10 Sec"
