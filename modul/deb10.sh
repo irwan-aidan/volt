@@ -99,9 +99,6 @@ apt-get install nano wget curl zip unzip tar gzip p7zip-full bc rc openssl cron 
  
 # Now installing all our wanted services
 apt-get install dropbear stunnel4 privoxy ca-certificates nginx ruby apt-transport-https lsb-release squid screenfetch -y
-apt install iptables iptables-persistent -y
-systemctl restart netfilter-persistent
-systemctl enable netfilter-persistent
 
 apt install tuned -y
 systemctl enable tuned
@@ -612,11 +609,19 @@ iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o $ANU -j SNAT --to xxxxxxxxx
 iptables -t nat -A POSTROUTING -s 192.168.2.0/24 -o $ANU -j SNAT --to xxxxxxxxx
 iptables -t nat -A POSTROUTING -s 192.168.3.0/24 -o $ANU -j SNAT --to xxxxxxxxx
 iptables -t nat -A POSTROUTING -s 192.168.4.0/24 -o $ANU -j SNAT --to xxxxxxxxx
+iptables -t nat -I POSTROUTING -s 192.168.1.0/24 -o $ANU -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.2.0/24 -o $ANU -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.3.0/24 -o $ANU -j MASQUERADE
+iptables -t nat -I POSTROUTING -s 192.168.4.0/24 -o $ANU -j MASQUERADE
 iptables -A INPUT -s $(wget -4qO- http://ipinfo.io/ip) -p tcp -m multiport --dport 1:65535 -j ACCEPT
 iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 iptables -I OUTPUT -o eth0 -d 0.0.0.0/0 -j ACCEPT
 iptables-save > /etc/iptables.up.rules
 chmod +x /etc/iptables.up.rules
+
+apt install iptables iptables-persistent -y
+systemctl restart netfilter-persistent
+systemctl enable netfilter-persistent
 netfilter-persistent save
 netfilter-persistent reload
  
@@ -899,12 +904,6 @@ cd ~
 # Turning Off Multi-login Auto Kill
 rm -f /etc/cron.d/set_multilogin_autokill_lib
 
-wget -N --no-check-certificate https://github.com/ylx2016/kernel/releases/download/4.14.168bbrplus/linux-headers-4.14.168-bbrplus_4.14.168-bbrplus-1-d10_amd64.deb
-wget -N --no-check-certificate https://github.com/ylx2016/kernel/releases/download/4.14.168bbrplus/linux-image-4.14.168-bbrplus_4.14.168-bbrplus-1-d10_amd64.deb
-					
-dpkg -i linux-headers-4.14.168-bbrplus_4.14.168-bbrplus-1-d10_amd64.deb
-dpkg -i linux-image-4.14.168-bbrplus_4.14.168-bbrplus-1-d10_amd64.deb
-
 sed -i '/fs.file-max/d' /etc/sysctl.conf
 sed -i '/fs.inotify.max_user_instances/d' /etc/sysctl.conf
 sed -i '/net.ipv4.tcp_syncookies/d' /etc/sysctl.conf
@@ -922,8 +921,8 @@ sed -i '/net.ipv4.tcp_timestamps/d' /etc/sysctl.conf
 sed -i '/net.ipv4.tcp_max_orphans/d' /etc/sysctl.conf
 sed -i '/net.ipv4.ip_forward/d' /etc/sysctl.conf
 echo "fs.file-max = 1000000
-echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
-echo "net.ipv4.tcp_congestion_control=bbrplus" >> /etc/sysctl.conf
+echo "net.core.default_qdisc=fq"
+echo "net.ipv4.tcp_congestion_control=bbr"
 fs.inotify.max_user_instances = 8192
 net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_fin_timeout = 30
