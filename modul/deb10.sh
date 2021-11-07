@@ -856,12 +856,36 @@ iptables-save > /etc/iptables.up.rules
 iptables-restore -t < /etc/iptables.up.rules
 netfilter-persistent save
 netfilter-persistent reload
+
 # install badvpn
 cd
-wget -O /usr/bin/badvpn-udpgw "https://github.com/D-Xtream/unstable/raw/beta/addon/badvpn-udpgw64"
-chmod +x /usr/bin/badvpn-udpgw
+curl -4skL "https://github.com/ambrop72/badvpn/archive/4b7070d8973f99e7cfe65e27a808b3963e25efc3.zip" -o /tmp/badvpn.zip
+unzip -qq /tmp/badvpn.zip -d /tmp && rm -f /tmp/badvpn.zip
+cd /tmp/badvpn-4b7070d8973f99e7cfe65e27a808b3963e25efc3
+cmake -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1 &> /dev/null
+make install &> /dev/null
+rm -rf /tmp/badvpn-4b7070d8973f99e7cfe65e27a808b3963e25efc3
+cat <<'EOFudpgw' > /lib/systemd/system/badvpn-udpgw.service
+[Unit]
+Description=BadVPN UDP Gateway Server daemon
+Wants=network.target
+After=network.target
+[Service]
+ExecStart=/usr/local/bin/badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 4000 --max-connections-for-client 4000 --loglevel info
+Restart=always
+RestartSec=3
+[Install]
+WantedBy=multi-user.target
+EOFudpgw
+systemctl daemon-reload
+systemctl restart badvpn-udpgw.service
+systemctl enable badvpn-udpgw.service
+fi
+badvpnEOF
+screen -S badvpninstall -dm bash -c "bash /tmp/install-badvpn.bash && rm -f /tmp/install-badvpn.bash"
 sed -i '$ i\screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 4000' /etc/rc.local
 screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 4000
+
 # setting vnstat
 apt -y install vnstat
 /etc/init.d/vnstat restart
