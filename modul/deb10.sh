@@ -113,6 +113,7 @@ apt-get autoremove -y
 
 rm -f /etc/localtime
 ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
+timedatectl set-timezone Asia/Kuala_Lumpur
 
 # NeoFetch
 apt-get --reinstall --fix-missing install -y bzip2 gzip coreutils wget screen rsyslog iftop htop net-tools zip unzip wget net-tools curl nano sed screen gnupg gnupg1 bc apt-transport-https build-essential dirmngr libxml-parser-perl neofetch git lsof -y
@@ -120,8 +121,8 @@ chmod +x /usr/bin/screenfetch
 echo "clear" >> .profile
 echo 'echo '' > /var/log/syslog' >> .profile
 echo "neofetch -p -A Android" >> .profile
-echo "echo '           DARKNET PREM SCRIPT             '" >> .profile
-echo "echo '           t.me/cyberbossz             '" >> .profile
+echo "echo 'DARKNET PREM SCRIPT '" >> .profile
+echo "echo 't.me/cyberbossz '" >> .profile
 
 sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb http://repo.pritunl.com/stable/apt buster main
@@ -689,42 +690,6 @@ mySquid
 sed -i "s|SquidCacheHelper|$Proxy_Port1|g" /etc/squid/squid.conf
 sed -i "s|SquidCacheHelper|$Proxy_Port2|g" /etc/squid/squid.conf
 
-cat <<'sslnginx' > /etc/nginx/conf.d/ssl-config.conf
-server {
-  listen  443 ssl;
-  ssl_certificate       /etc/v2ray/v2ray.crt;
-  ssl_certificate_key   /etc/v2ray/v2ray.key;
-  ssl_protocols         TLSv1 TLSv1.1 TLSv1.2;
-  ssl_ciphers           HIGH:!aNULL:!MD5;
-  server_name           ovh.xvolt.tech;
-  
-  location /vless {
-        proxy_redirect off;
-        proxy_pass http://127.0.0.1:12346/vless;
-        proxy_http_version 1.1;
-        proxy_set_header Host "ovh.xvolt.tech";
-        proxy_set_header Connection "Upgrade";
-        proxy_set_header Upgrade "WebSocket";
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_intercept_errors on;
-  }
-  
-  location /vmess {
-        proxy_redirect off;
-        proxy_pass http://127.0.0.1:12345/vmess;
-        proxy_http_version 1.1;
-        proxy_set_header Host "ovh.xvolt.tech";
-        proxy_set_header Connection "Upgrade";
-        proxy_set_header Upgrade "WebSocket";
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_intercept_errors on;
-  }
-  location / {
-    return 204;
-  }
-}
-sslnginx
-
 # Creating nginx config for our ovpn config downloads webserver
 cat <<'myNginxC' > /etc/nginx/conf.d/alien-config.conf
 # My OpenVPN Config Download Directory
@@ -901,7 +866,7 @@ systemctl enable vnstat
 /etc/init.d/vnstat restart
 rm -f /root/vnstat-2.6.tar.gz
 rm -rf /root/vnstat-2.6
-echo "0 5 * * * root reboot" >> /etc/crontab
+echo "12 0 * * * root reboot" >> /etc/crontab
 echo "0 0 * * * root xp" >> /etc/crontab
 # remove unnecessary files
 cd
@@ -929,5 +894,6 @@ history -c
 echo "unset HISTFILE" >> /etc/profile
 # finihsing
 clear
-rm -rf /root/ssh-vpn.sh
+rm -rf /root/deb10.sh
+rm -rf deb10.sh
 exit 1
