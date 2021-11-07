@@ -2,7 +2,7 @@
 
 clear
 echo -e ""
-echo -e " == JuanScript == " | lolcat -a
+echo -e " == VoltScript == " | lolcat -a
 echo -e ""
 echo -e "  [1] Show All Service Ports"
 echo -e "  [2] Edit OpenSSH Port"
