@@ -1,0 +1,35 @@
+#!/bin/bash
+source /usr/local/sbin/base-script
+
+clear
+echo -e "$TITLE"
+echo -e " Welcome! "
+echo -e ""
+echo -e " Commands:"
+echo -e " [1] Accounts"
+echo -e " [2] Options"
+echo -e " [3] Server"
+echo -e " [4] Exit"
+read -p "   Select from options [1-4]: " Menu
+echo -e ""
+case $Menu in
+		1)
+		clear
+		accounts
+		exit
+		;;
+		2)
+		clear
+		options
+		exit
+		;;
+		3)
+		clear
+		server
+		exit
+		;;
+		4)
+		clear
+		exit
+		;;
+	esac

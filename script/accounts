@@ -1,0 +1,90 @@
+#!/bin/bash
+source /usr/local/sbin/base-script
+
+clear
+echo -e "$TITLE"
+echo -e ""
+echo -e "$GRN1 Create"
+echo -e "$GRN2 Create Random"
+echo -e "$GRN3 Create Trial"
+echo -e "$GRN4 User List"
+echo -e "$GRN5 User Details"
+echo -e "$GRN6 User Extend"
+echo -e "$GRN7 User Delete"
+echo -e "$GRN8 User Lock"
+echo -e "$GRN9 User Unlock"
+echo -e "$GRN10 Connections"
+echo -e "$GRN11 Delete Expired"
+echo -e "$GRN12 Locked List"
+echo -e "$GRN13 Exit/Cancel"
+echo -e ""
+read -p "$(echo -e " Select from options\e[32m [\e[0m1-13\e[32m]\e[0m: ")" Accounts
+echo -e "\n\n"
+sleep 1
+clear
+case $Accounts in
+		1)
+		clear
+		create
+		exit
+		;;
+		2)
+		clear
+		create_random
+		exit
+		;;
+		3)
+		clear
+		create_trial
+		exit
+		;;
+		4)
+		clear
+		user_list
+		exit
+		;;
+		5)
+		clear
+		user_details
+		exit
+		;;
+		6)
+		clear
+		user_extend
+		exit
+		;;
+		7)
+		clear
+		user_delete
+		exit
+		;;
+		8)
+		clear
+		user_lock
+		exit
+		;;
+		9)
+		clear
+		user_unlock
+		exit
+		;;
+		10)
+		clear
+		connections
+		exit
+		;;
+		11)
+		clear
+		delete_expired
+		exit
+		;;
+		12)
+		clear
+		locked_list
+		exit
+		;;
+		13)
+		clear
+		exit
+		;;
+	esac

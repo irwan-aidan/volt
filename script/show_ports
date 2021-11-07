@@ -1,0 +1,25 @@
+#!/bin/bash
+
+opensshport="$(netstat -ntlp | grep -i ssh | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g' )"
+dropbearport="$(netstat -nlpt | grep -i dropbear | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
+stunnel4port="$(netstat -nlpt | grep -i stunnel | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
+openvpnport="$(cat /etc/openvpn/server_tcp.conf | grep -i port | awk '{print $2}' | xargs | sed -e 's/ /, /g')"
+openvpnport1="$(cat /etc/openvpn/server_tcp1.conf | grep -i port | awk '{print $2}' | xargs | sed -e 's/ /, /g')"
+openudp="$(cat /etc/openvpn/server_udp.conf | grep -i port | awk '{print $2}' | xargs | sed -e 's/ /, /g')"
+openudp1="$(cat /etc/openvpn/server_udp1.conf | grep -i port | awk '{print $2}' | xargs | sed -e 's/ /, /g')"
+squidport="$(netstat -nlpt | grep -i squid | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
+ziproxyport="$(netstat -nlpt | grep -i ziproxy | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
+privoxyport="$(netstat -nlpt | grep -i privoxy | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
+clear
+echo -e ""
+echo -e " == JuanScript == " | lolcat -a
+echo -e ""
+echo -e "\e[32m  SSL Port: \e[0m"$stunnel4port
+echo -e "\e[32m  OpenSSH Port: \e[0m"$opensshport
+echo -e "\e[32m  Auto Recon Port: \e[0m"$ziproxyport
+echo -e "\e[32m  Squid Ports: \e[0m"$squidport
+echo -e "\e[32m  Dropbear Port: \e[0m"$dropbearport
+echo -e "\e[32m  Privoxy Ports: \e[0m"$privoxyport
+echo -e "\e[32m  OpenVPN TCP Port: \e[0m"$openvpnport, $openvpnport1
+echo -e "\e[32m  OpenVPN UDP Port: \e[0m"$openudp, $openudp1
+echo -e ""
