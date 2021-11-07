@@ -99,6 +99,13 @@ apt-get install nano wget curl zip unzip tar gzip p7zip-full bc rc openssl cron 
 # Now installing all our wanted services
 apt-get install dropbear stunnel4 privoxy ca-certificates nginx ruby apt-transport-https lsb-release squid screenfetch -y
 apt install iptables iptables-persistent -y
+systemctl restart netfilter-persistent
+systemctl enable netfilter-persistent
+
+apt install tuned -y
+systemctl enable tuned
+systemctl restart tuned
+tuned-adm profile throughput-performance
 
 # Installing all required packages to install Webmin
 apt-get install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python dbus libxml-parser-perl -y
@@ -666,10 +673,15 @@ sed -i "s|IP-ADDRESS|$MYIP|g" /etc/privoxy/config
 sed -i "s|Privoxy_Port1|$Privoxy_Port1|g" /etc/privoxy/config
 sed -i "s|Privoxy_Port2|$Privoxy_Port2|g" /etc/privoxy/config
 
-# I'm setting Some Squid workarounds to prevent Privoxy's overflowing file descriptors that causing 50X error when clients trying to connect to your proxy server(thanks for this trick @homer_simpsons)
 apt remove --purge squid -y
-rm -rf /etc/squid/sq*
-apt install squid -y
+wget "http://security.debian.org/debian-security/pool/updates/main/s/squid3/squid_3.5.23-5+deb9u7_amd64.deb" -qO squid.deb
+dpkg -i squid.deb
+rm -f squid.deb
+
+apt install libecap3 squid-common squid-langpack -y
+wget "http://security.debian.org/debian-security/pool/updates/main/s/squid3/squid_3.5.23-5+deb9u7_amd64.deb" -qO squid.deb
+dpkg -i squid.deb
+rm -f squid.deb
  
 # Squid Ports (must be 1024 or higher)
 
@@ -684,7 +696,7 @@ refresh_pattern ^ftp: 1440 20% 10080
 refresh_pattern ^gopher: 1440 0% 1440
 refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
 refresh_pattern . 0 20% 4320
-visible_hostname localhost
+visible_hostname Volt
 mySquid
 
 sed -i "s|SquidCacheHelper|$Proxy_Port1|g" /etc/squid/squid.conf
