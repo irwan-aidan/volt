@@ -23,7 +23,6 @@ stunnel4port="$(netstat -nlpt | grep -i stunnel | grep -i 0.0.0.0 | awk '{print 
 openvpnport="$(cat /etc/openvpn/server_tcp.conf | grep -i port | awk '{print $2}' | xargs | sed -e 's/ /, /g')"
 openudp="$(cat /etc/openvpn/server_udp.conf | grep -i port | awk '{print $2}' | xargs | sed -e 's/ /, /g')"
 squidport="$(netstat -nlpt | grep -i squid | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
-ziproxyport="$(netstat -nlpt | grep -i ziproxy | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
 privoxyport="$(netstat -nlpt | grep -i privoxy | grep -i 0.0.0.0 | awk '{print $4}' | cut -d: -f2 | xargs | sed -e 's/ /, /g')"
 
 useradd -e `date -d "$Days days" +"%Y-%m-%d"` -s /bin/false -M $User &> /dev/null
@@ -41,7 +40,6 @@ echo -e "\e[32m  Dropbear Port: \e[0m"$dropbearport
 echo -e "\e[32m  SSL Port: \e[0m"$stunnel4port
 echo -e "\e[32m  Squid Ports: \e[0m"$squidport
 echo -e "\e[32m  Privoxy Ports: \e[0m"$privoxyport
-echo -e "\e[32m  ZiProxy Port: \e[0m"$ziproxyport
 echo -e "\e[32m  OpenVPN TCP Port: \e[0m"$openvpnport
 echo -e "\e[32m  OpenVPN UDP Port: \e[0m"$openudp
 echo -e ""
