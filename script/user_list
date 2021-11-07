@@ -9,7 +9,7 @@ else
 fi
 clear
 echo -e ""
-echo -e " == JuanScript == " | lolcat -a
+echo -e " == VoltScript == " | lolcat -a
 echo -e "  Users list " | lolcat
 echo -e " Username     Expiration"
 echo " "
