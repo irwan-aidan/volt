@@ -1,28 +1,37 @@
 #!/bin/bash
 source /usr/local/sbin/base-script
-
+#Menu VPN
+merah="\e[1;31m"
+kuning="\e[1;33m"
+biru="\e[1;34m"
+putih="\e[1;37m"
+cyan="\e[1;36m"
 clear
-echo -e "$TITLE"
-echo -e ""
-echo -e "$GRN1 Create"
-echo -e "$GRN2 Create Random"
-echo -e "$GRN3 Create Trial"
-echo -e "$GRN4 User List"
-echo -e "$GRN5 User Details"
-echo -e "$GRN6 User Extend"
-echo -e "$GRN7 User Delete"
-echo -e "$GRN8 User Lock"
-echo -e "$GRN9 User Unlock"
-echo -e "$GRN10 Connections"
-echo -e "$GRN11 Delete Expired"
-echo -e "$GRN12 Locked List"
-echo -e "$GRN13 Exit/Cancel"
-echo -e ""
-read -p "$(echo -e " Select from options\e[32m [\e[0m1-13\e[32m]\e[0m: ")" Accounts
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "\E[41;1;30m           MENU VPN              \E[0m"
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "\E[44;1;37m           SSH/OVPN            \E[0m"
+echo -e "$merah 1$putih. Create $biru(New ID)"
+echo -e "$merah 2$putih. Create Random $biru(Random ID)"
+echo -e "$merah 3$putih. Create Trial $biru(Trial ID)"
+echo -e "$merah 4$putih. User List $biru(User Created)"
+echo -e "$merah 5$putih. User Details $biru(Show Detail ID)"
+echo -e "$merah 6$putih. User Extend $biru(Extend ID)"
+echo -e "$merah 7$putih. User Delete $biru(Delete ID)"
+echo -e "$merah 8$putih. User Lock $biru(Lock ID)"
+echo -e "$merah 9$putih. User Unlock $biru(Unlock ID)"
+echo -e "$merah 10$putih. Connections $biru(Show Login ID)"
+echo -e "$merah 11$putih. Delete Expired $biru(Delete Exp ID)"
+echo -e "$merah 12$putih. Locked List $biru(Lock List ID)"
+echo -e "$merah 13$putih. Exit/Menu $biru(Go Main Menu)"
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "\e[46mTo exit the menu press CTRL + C \E[0m"
+echo -e "$putih━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\E[0m"
+read -rp "  Please Enter The Number [1-12] : " -e Menu-Vpn
 echo -e "\n\n"
 sleep 1
 clear
-case $Accounts in
+case $Menu-Vpn in
 		1)
 		clear
 		create
@@ -85,6 +94,7 @@ case $Accounts in
 		;;
 		13)
 		clear
+		menu
 		exit
 		;;
 	esac
