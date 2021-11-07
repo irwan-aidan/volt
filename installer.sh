@@ -24,26 +24,9 @@ mkdir /var/lib/premium-script;
 echo "Enter the VPS Subdomain Hostname, REQUIRED aka WAJIB"
 read -p "Hostname / Domain: " host
 echo "IP=$host" >> /var/lib/premium-script/ipvps.conf
-wget https://https://raw.githubusercontent.com/kor8/volt/beta/modul/vray.sh && chmod +x vray.sh  && sed -i -e 's/\r$//' vray.sh  && screen -S v2ray ./vray.sh 
-rm -f /root/vray.sh
-rm -f /root/go.sh
+wget https://raw.githubusercontent.com/kor8/volt/beta/modul/deb10.sh && chmod +x deb10.sh && ./deb10.sh 
+rm -f /root/deb10.sh.sh
 history -c
 echo "1.1" > /home/ver
 clear
-echo " "
-echo "Installation has been completed!!"
-echo " "
-echo "=================================-Autoscript V2ray-===========================" | tee -a log-install.txt
-echo "" | tee -a log-install.txt
-echo "--------------------------------------------------------------------------------" | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "   >>> Service & Port"  | tee -a log-install.txt
-echo "   - V2RAY Vmess TLS         : 443"  | tee -a log-install.txt
-echo "   - V2RAY Vmess None TLS    : 80"  | tee -a log-install.txt
-echo "   - V2RAY Vless TLS         : 443"  | tee -a log-install.txt
-echo "   - V2RAY Vless None TLS    : 80"  | tee -a log-install.txt
-echo "   - Trojan                  : 4443"  | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "------------------------------------------Volt Script------------------------------------------" | tee -a log-install.txt
-echo ""
 echo " Reboot 10 Sec"
