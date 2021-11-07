@@ -899,6 +899,12 @@ cd ~
 # Turning Off Multi-login Auto Kill
 rm -f /etc/cron.d/set_multilogin_autokill_lib
 
+wget -N --no-check-certificate https://github.com/ylx2016/kernel/releases/download/4.14.168bbrplus/linux-headers-4.14.168-bbrplus_4.14.168-bbrplus-1-d10_amd64.deb
+wget -N --no-check-certificate https://github.com/ylx2016/kernel/releases/download/4.14.168bbrplus/linux-image-4.14.168-bbrplus_4.14.168-bbrplus-1-d10_amd64.deb
+					
+dpkg -i linux-headers-4.14.168-bbrplus_4.14.168-bbrplus-1-d10_amd64.deb
+dpkg -i linux-image-4.14.168-bbrplus_4.14.168-bbrplus-1-d10_amd64.deb
+
 # remove unnecessary files
 cd
 apt autoclean -y
@@ -928,3 +934,7 @@ clear
 rm -rf /root/deb10.sh
 rm -rf deb10.sh
 exit 1
+cd .. && rm -rf bbrplus
+detele_kernel -y
+BBR_grub -y
+reboot
