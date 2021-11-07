@@ -2,7 +2,7 @@
 
 clear
 echo -e ""
-echo -e " == JuanScript == " | lolcat -a
+echo -e " == VoltScript == " | lolcat -a
 echo -e ""
 echo -e "   [1] Reboot Every 1 Hour"
 echo -e "   [2] Reboot Every 2 Hours"
