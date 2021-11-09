@@ -89,7 +89,6 @@ cat << xxx >/etc/apt/sources.list
 deb http://cloudfront.debian.net/debian buster main contrib non-free
 deb http://cloudfront.debian.net/debian buster-updates main contrib non-free
 deb http://cloudfront.debian.net/debian buster-backports main contrib non-free
-deb http://cloudfront.debian.net/debian buster-security main contrib non-free
 xxx
 
 apt-get update
