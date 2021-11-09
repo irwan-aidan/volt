@@ -465,14 +465,6 @@ systemctl restart $StunnelDir
 
 apt -y install openvpn iptables iptables-persistent -y
 
-# Checking if openvpn folder is accidentally deleted or purged
-if [[ ! -e /etc/openvpn ]]; then
- mkdir -p /etc/openvpn
-fi
-
-# Removing all existing openvpn server files
-rm -rf /etc/openvpn/*
-
 # Creating server.conf, ca.crt, server.crt and server.key
 cat <<'myOpenVPNconf1' > /etc/openvpn/server_tcp.conf
 port MyOvpnPort1
@@ -495,7 +487,7 @@ tun-mtu 1500
 plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
 verify-client-cert none
 username-as-common-name
-max-clients 4000
+max-clients 4080
 topology subnet
 server 192.168.1.0 255.255.255.0
 push "redirect-gateway def1"
@@ -530,7 +522,7 @@ tun-mtu 1500
 plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
 verify-client-cert none
 username-as-common-name
-max-clients 4000
+max-clients 4080
 topology subnet
 server 192.168.2.0 255.255.255.0
 push "redirect-gateway def1"
@@ -565,7 +557,7 @@ tun-mtu 1500
 plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
 verify-client-cert none
 username-as-common-name
-max-clients 4000
+max-clients 4080
 topology subnet
 server 192.168.3.0 255.255.255.0
 push "redirect-gateway def1"
@@ -600,7 +592,7 @@ tun-mtu 1500
 plugin /etc/openvpn/openvpn-auth-pam.so /etc/pam.d/login
 verify-client-cert none
 username-as-common-name
-max-clients 4000
+max-clients 4080
 topology subnet
 server 192.168.4.0 255.255.255.0
 push "redirect-gateway def1"
