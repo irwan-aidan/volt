@@ -93,7 +93,6 @@ xxx
 
 apt-get update
 apt-get upgrade -y
-apt install resolvconf -y
 
 apt install fail2ban -y
  
@@ -333,13 +332,8 @@ chmod +x /usr/bin/screenfetch
 echo "clear" >> .profile
 echo 'echo '' > /var/log/syslog' >> .profile
 echo "neofetch -p -A Android" >> .profile
-echo "echo 'DARKNET PREM SCRIPT '" >> .profile
-echo "echo 't.me/cyberbossz '" >> .profile
-
-wget https://raw.githubusercontent.com/kor8/volt/beta/modul/streaming.sh
-chmod +x streaming.sh
-./streaming.sh
-rm -f streaming.sh
+echo "echo ' DARKNET PREM SCRIPT '" >> .profile
+echo "echo ' t.me/cyberbossz '" >> .profile
 
 # Removing some duplicated sshd server configs
 rm -f /etc/ssh/sshd_config*
