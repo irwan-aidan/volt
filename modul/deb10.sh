@@ -85,25 +85,374 @@ systemctl start rc-local.service
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
 
+cat << EOF >/etc/apt/sources.list
+deb http://cloudfront.debian.net/debian buster main contrib non-free
+deb http://cloudfront.debian.net/debian buster-updates main contrib non-free
+deb http://cloudfront.debian.net/debian buster-backports main contrib non-free
+deb http://cloudfront.debian.net/debian-security buster-security main contrib non-free
+EOF
+
 apt-get update
 apt-get upgrade -y
+apt install resolvconf -y
 
 apt install fail2ban -y
  
 # Removing some firewall tools that may affect other services
 apt-get remove --purge ufw firewalld -y
 apt-get remove --purge exim4 -y
+
+source /etc/profile
+cat << EOF >~/.bash_profile
+PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+ulimit -n 1000000
+HISTCONTROL=ignoredups
+alias reboot="sudo systemctl reboot"
+EOF
+source ~/.bash_profile
+
+cat << EOF >/etc/security/limits.conf
+* soft nofile 1000000
+* hard nofile 1000000
+root soft nofile 1000000
+root hard nofile 1000000
+* soft nproc unlimited
+* hard nproc unlimited
+root soft nproc unlimited
+root hard nproc unlimited
+* soft core unlimited
+* hard core unlimited
+root soft core unlimited
+root hard core unlimited
+EOF
+
+dpkg --configure -a
+
+apt update --fix-missing && apt upgrade --allow-downgrades -y
+apt full-upgrade -y && apt --purge autoremove -y && apt autoclean -y
+
+unset aptPKG
+[[ -z $(dpkg -l | grep ' sudo ') ]] && aptPKG+=(sudo)
+[[ -z $(dpkg -l | grep ' locales ') ]] && aptPKG+=(locales)
+[[ -z $(dpkg -l | grep ' netcat ') ]] && aptPKG+=(netcat)
+[[ -z $(dpkg -l | grep ' dnsutils ') ]] && aptPKG+=(dnsutils)
+[[ -z $(dpkg -l | grep ' net-tools ') ]] && aptPKG+=(net-tools)
+[[ -z $(dpkg -l | grep ' resolvconf ') ]] && aptPKG+=(resolvconf)
+[[ -z $(dpkg -l | grep ' iptables ') ]] && aptPKG+=(iptables)
+[[ -z $(dpkg -l | grep ' ipset ') ]] && aptPKG+=(ipset)
+[[ -z $(dpkg -l | grep ' wget ') ]] && aptPKG+=(wget)
+[[ -z $(dpkg -l | grep ' curl ') ]] && aptPKG+=(curl)
+[[ -z $(dpkg -l | grep ' git ') ]] && aptPKG+=(git)
+[[ -z $(dpkg -l | grep ' ca-certificates ') ]] && aptPKG+=(ca-certificates)
+[[ -z $(dpkg -l | grep ' apt-transport-https ') ]] && aptPKG+=(apt-transport-https)
+[[ -z $(dpkg -l | grep ' gnupg2 ') ]] && aptPKG+=(gnupg2)
+[[ -z $(dpkg -l | grep ' unzip ') ]] && aptPKG+=(unzip)
+[[ -z $(dpkg -l | grep ' jq ') ]] && aptPKG+=(jq)
+[[ -z $(dpkg -l | grep ' bc ') ]] && aptPKG+=(bc)
+[[ -z $(dpkg -l | grep ' moreutils ') ]] && aptPKG+=(moreutils)
+[[ -z $(dpkg -l | grep ' haveged ') ]] && aptPKG+=(haveged)
+[[ -z $(dpkg -l | grep ' socat ') ]] && aptPKG+=(socat)
+[[ -z $(dpkg -l | grep ' ethtool ') ]] && aptPKG+=(ethtool)
+[[ -z $(dpkg -l | grep ' screen ') ]] && aptPKG+=(screen)
+[[ -z $(dpkg -l | grep ' qrencode ') ]] && aptPKG+=(qrencode)
+[[ -n $aptPKG ]] && apt install $(echo ${aptPKG[@]})
+
+systemctl enable --now haveged
+systemctl mask --now systemd-resolved
+systemctl daemon-reload
+
+echo "en_US.UTF-8 UTF-8" >/etc/locale.gen
+cat << EOF >/etc/default/locale
+LANG=en_US.UTF-8
+LANGUAGE=en_US.UTF-8
+LC_CTYPE="en_US.UTF-8"
+LC_NUMERIC="en_US.UTF-8"
+LC_TIME="en_US.UTF-8"
+LC_COLLATE="en_US.UTF-8"
+LC_MONETARY="en_US.UTF-8"
+LC_MESSAGES="en_US.UTF-8"
+LC_PAPER="en_US.UTF-8"
+LC_NAME="en_US.UTF-8"
+LC_ADDRESS="en_US.UTF-8"
+LC_TELEPHONE="en_US.UTF-8"
+LC_MEASUREMENT="en_US.UTF-8"
+LC_IDENTIFICATION="en_US.UTF-8"
+LC_ALL=en_US.UTF-8
+EOF
+locale-gen en_US.UTF-8
+echo "Asia/Kuala_Lumpur" >/etc/timezone
+ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
+
+if [[ $virtVC == "vm" ]]; then
+modprobe nf_conntrack
+modprobe xt_conntrack
+modprobe ip_conntrack
+modprobe nf_nat
+modprobe xt_nat
+modprobe iptable_nat
+modprobe ip_tables
+
+sed -i '/nf_conntrack/d' /etc/modules-load.d/modules.conf
+sed -i '/xt_conntrack/d' /etc/modules-load.d/modules.conf
+sed -i '/ip_conntrack/d' /etc/modules-load.d/modules.conf
+sed -i '/nf_nat/d' /etc/modules-load.d/modules.conf
+sed -i '/xt_nat/d' /etc/modules-load.d/modules.conf
+sed -i '/iptable_nat/d' /etc/modules-load.d/modules.conf
+sed -i '/ip_tables/d' /etc/modules-load.d/modules.conf
+cat << EOF >>/etc/modules-load.d/modules.conf
+nf_conntrack
+xt_conntrack
+ip_conntrack
+nf_nat
+xt_nat
+iptable_nat
+ip_tables
+EOF
+
+cat << EOF >/etc/sysctl.conf
+kernel.sched_energy_aware = 1
+kernel.sysrq = 0
+kernel.panic = 0
+kernel.panic_on_oops = 0
+vm.overcommit_memory = 1
+vm.swappiness = 10
+vm.dirty_ratio = 10
+vm.dirty_background_ratio = 5
+fs.nr_open = 1000000
+fs.file-max = 1000000
+fs.inotify.max_user_instances = 819200
+fs.inotify.max_queued_events = 32000
+fs.inotify.max_user_watches = 64000
+net.unix.max_dgram_qlen = 1024
+net.nf_conntrack_max = 131072
+net.netfilter.nf_conntrack_acct = 0
+net.netfilter.nf_conntrack_checksum = 0
+net.netfilter.nf_conntrack_events = 1
+net.netfilter.nf_conntrack_timestamp = 1
+net.netfilter.nf_conntrack_helper = 1
+net.netfilter.nf_conntrack_max = 16384
+net.netfilter.nf_conntrack_buckets = 65536
+net.netfilter.nf_conntrack_tcp_loose = 1
+net.netfilter.nf_conntrack_tcp_be_liberal = 1
+net.netfilter.nf_conntrack_tcp_max_retrans = 3
+net.netfilter.nf_conntrack_generic_timeout = 60
+net.netfilter.nf_conntrack_tcp_timeout_unacknowledged = 30
+net.netfilter.nf_conntrack_tcp_timeout_time_wait = 2
+net.netfilter.nf_conntrack_tcp_timeout_close_wait = 15
+net.netfilter.nf_conntrack_tcp_timeout_close = 5
+net.netfilter.nf_conntrack_tcp_timeout_last_ack = 15
+net.netfilter.nf_conntrack_tcp_timeout_fin_wait = 15
+net.netfilter.nf_conntrack_tcp_timeout_syn_recv = 15
+net.netfilter.nf_conntrack_tcp_timeout_syn_sent = 15
+net.netfilter.nf_conntrack_tcp_timeout_established = 3600
+net.netfilter.nf_conntrack_sctp_timeout_established = 3600
+net.netfilter.nf_conntrack_udp_timeout = 15
+net.netfilter.nf_conntrack_udp_timeout_stream = 45
+net.core.somaxconn = 65535
+net.core.optmem_max = 4194304
+net.core.netdev_max_backlog = 300000
+net.core.rmem_default = 4194304
+net.core.rmem_max = 4194304
+net.core.wmem_default = 4194304
+net.core.wmem_max = 4194304
+net.ipv4.conf.all.arp_accept = 0
+net.ipv4.conf.default.arp_accept = 0
+net.ipv4.conf.all.arp_announce = 2
+net.ipv4.conf.default.arp_announce = 2
+net.ipv4.conf.all.arp_ignore = 1
+net.ipv4.conf.default.arp_ignore = 1
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv4.conf.all.secure_redirects = 0
+net.ipv4.conf.default.secure_redirects = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.ip_forward = 0
+net.ipv4.ip_local_port_range = 1024 65535
+net.ipv4.ip_no_pmtu_disc = 0
+net.ipv4.route.gc_timeout = 100
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+net.ipv4.icmp_ignore_bogus_error_responses = 1
+net.ipv4.udp_rmem_min = 16384
+net.ipv4.udp_wmem_min = 16384
+net.ipv4.tcp_mtu_probing = 0
+net.ipv4.tcp_base_mss = 1024
+net.ipv4.tcp_mtu_probe_floor = 48
+net.ipv4.tcp_min_snd_mss = 48
+net.ipv4.tcp_probe_interval = 600
+net.ipv4.tcp_probe_threshold = 8
+net.ipv4.tcp_min_tso_segs = 2
+net.ipv4.tcp_tso_win_divisor = 3
+net.ipv4.tcp_moderate_rcvbuf = 1
+net.ipv4.tcp_app_win = 31
+net.ipv4.tcp_adv_win_scale = 1
+net.ipv4.tcp_mem = 181419 241895 362838
+net.ipv4.tcp_rmem = 8192 87380 6291456
+net.ipv4.tcp_wmem = 8192 65536 4194304
+net.ipv4.tcp_max_tw_buckets = 60000
+net.ipv4.tcp_max_syn_backlog = 32768
+net.ipv4.tcp_max_orphans = 32768
+net.ipv4.tcp_abort_on_overflow = 0
+net.ipv4.tcp_window_scaling = 1
+net.ipv4.tcp_workaround_signed_windows = 0
+net.ipv4.tcp_no_metrics_save = 1
+net.ipv4.tcp_no_ssthresh_metrics_save = 1
+net.ipv4.tcp_fwmark_accept = 0
+net.ipv4.tcp_invalid_ratelimit = 500
+net.ipv4.tcp_ecn = 0
+net.ipv4.tcp_fastopen = 3
+net.ipv4.tcp_fastopen_key = 00000000-00000000-00000000-00000000
+net.ipv4.tcp_fastopen_blackhole_timeout_sec = 0
+net.ipv4.tcp_thin_linear_timeouts = 0
+net.ipv4.tcp_keepalive_time = 1800
+net.ipv4.tcp_keepalive_intvl = 15
+net.ipv4.tcp_keepalive_probes = 5
+net.ipv4.tcp_timestamps = 1
+net.ipv4.tcp_tw_reuse = 2
+net.ipv4.tcp_fin_timeout = 10
+net.ipv4.tcp_rfc1337 = 1
+net.ipv4.tcp_orphan_retries = 2
+net.ipv4.tcp_syn_retries = 3
+net.ipv4.tcp_synack_retries = 2
+net.ipv4.tcp_syncookies = 0
+net.ipv4.tcp_retries1 = 3
+net.ipv4.tcp_retries2 = 15
+net.ipv4.tcp_sack = 1
+net.ipv4.tcp_dsack = 1
+net.ipv4.tcp_fack = 0
+net.ipv4.tcp_challenge_ack_limit=100000000
+net.ipv4.tcp_frto = 0
+net.ipv4.tcp_recovery = 1
+net.ipv4.tcp_reordering = 3
+net.ipv4.tcp_early_retrans = 3
+net.ipv4.tcp_retrans_collapse = 1
+net.ipv4.tcp_autocorking = 1
+net.ipv4.tcp_slow_start_after_idle = 0
+EOF
+
+sed -i "/net.core.default_qdisc/d" /etc/sysctl.conf
+sed -i '/net.ipv4.tcp_congestion_control/d' /etc/sysctl.conf
+
+if [[ $(uname -r) =~ "bbrplus" ]]; then
+  echo "net.core.default_qdisc = fq" >>/etc/sysctl.conf
+  echo "net.ipv4.tcp_congestion_control = bbrplus" >>/etc/sysctl.conf
+else
+  echo "net.core.default_qdisc = fq" >>/etc/sysctl.conf
+  echo "net.ipv4.tcp_congestion_control = bbr" >>/etc/sysctl.conf
+fi
+sysctl -p 
+systemctl restart systemd-sysctl
+fi
+
+rm -rf /etc/resolv.conf
+cat << EOF >/etc/resolv.conf
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+EOF
+
+rm -rf /etc/resolvconf/resolv.conf.d/*
+>/etc/resolvconf/resolv.conf.d/original
+>/etc/resolvconf/resolv.conf.d/base
+>/etc/resolvconf/resolv.conf.d/tail
+rm -rf /etc/resolv.conf
+rm -rf /run/resolvconf/interface
+cat << EOF >/etc/resolvconf/resolv.conf.d/head
+nameserver 127.0.0.1
+EOF
+if [[ -f "/etc/resolvconf/run/resolv.conf" ]]; then
+ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
+elif [[ -f "/run/resolvconf/resolv.conf" ]]; then
+ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
+fi
+resolvconf -u
+
+cat << "EOF" >/opt/de_GWD/Q4amSun
+#!/bin/bash
+checkSum(){
+sha256sumL=$(sha256sum $1 2>/dev/null | awk '{print$1}')
+if [[ $sha256sumL == $2 ]]; then 
+  echo "true"
+elif [[ $sha256sumL != $2 ]]; then
+  echo "false"
+fi
+}
+IPchnroute_sha256sum=$(curl -m 5 -fsSLo- https://raw.githubusercontent.com/jacyl4/chnroute/main/IPchnroute.sha256sum)
+if [[ $(checkSum /opt/de_GWD/.repo/IPchnroute $IPchnroute_sha256sum) == "false" ]]; then
+rm -rf /tmp/IPchnroute
+wget --show-progress -t 5 -T 10 -cqO /tmp/IPchnroute https://raw.githubusercontent.com/jacyl4/chnroute/main/IPchnroute
+[[ $(checkSum /tmp/IPchnroute $IPchnroute_sha256sum) == "false" ]] && red "Download Failed" && exit
+[[ $(checkSum /tmp/IPchnroute $IPchnroute_sha256sum) == "true" ]] && mv -f /tmp/IPchnroute /opt/de_GWD/.repo/IPchnroute
+fi
+if [[ $(checkSum /opt/de_GWD/.repo/IPchnroute $IPchnroute_sha256sum) == "true" ]]; then
+cp -f /opt/de_GWD/.repo/IPchnroute /opt/de_GWD/chnrouteSET
+sed -i '/^\s*$/d' /opt/de_GWD/chnrouteSET
+sed -i 's/^/add chnroute &/g' /opt/de_GWD/chnrouteSET
+fi
+ipset -F chnroute >/dev/null 2>&1
+ipset -X chnroute >/dev/null 2>&1
+ipset -N chnroute nethash hashsize 4096 maxelem 100000 
+ipset -! -R </opt/de_GWD/chnrouteSET
+EOF
+chmod +x /opt/de_GWD/Q4amSun
+/opt/de_GWD/Q4amSun
+
+cat << EOF >/opt/de_GWD/iptablesrules-up
+#!/bin/bash
+xtlsPort=\$(jq -r '.inbounds[] | select(.tag == "forward") | .port' /opt/de_GWD/vtrui/config.json 2>/dev/null | grep -v '^null\$')
+[[ -n \$xtlsPort ]] && iptables -A INPUT -m set --match-set chnroute src -p tcp --dport \$xtlsPort -j DROP
+iptables -A INPUT -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
+iptables -A INPUT -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
+iptables -A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
+iptables -A INPUT -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP
+iptables -A INPUT -p tcp --tcp-flags FIN,RST FIN,RST -j DROP
+iptables -A INPUT -p tcp --tcp-flags FIN,ACK FIN -j DROP
+iptables -A INPUT -p tcp --tcp-flags ACK,URG URG -j DROP
+iptables -A INPUT -p tcp --tcp-flags ACK,FIN FIN -j DROP
+iptables -A INPUT -p tcp --tcp-flags ACK,PSH PSH -j DROP
+iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
+iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+iptables -A INPUT -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP
+iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j DROP
+iptables -A INPUT -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP
+iptables -A INPUT -p udp --dport 53 -i $ethernetnum -j DROP
+iptables -A INPUT -p tcp --dport 53 -i $ethernetnum -j DROP
+EOF
+chmod +x /opt/de_GWD/iptablesrules-up
+
+cat << EOF >/opt/de_GWD/iptablesrules-down
+#!/bin/bash
+iptables -F INPUT
+iptables -t mangle -F PREROUTING
+EOF
+chmod +x /opt/de_GWD/iptablesrules-down
+
+rm -rf /lib/systemd/system/iptablesrules.service
+cat << EOF >/etc/systemd/system/iptablesrules.service
+[Unit]
+Description=iptablesrules
+After=network.target
+[Service]
+User=root
+Type=oneshot
+ExecStart=/bin/bash /opt/de_GWD/iptablesrules-up
+ExecStop=/bin/bash /opt/de_GWD/iptablesrules-down
+RemainAfterExit=yes
+[Install]
+WantedBy=multi-user.target
+EOF
+ln -sf /etc/systemd/system/iptablesrules.service /lib/systemd/system/iptablesrules.service
+systemctl daemon-reload
+systemctl enable iptablesrules
  
 # Installing some important machine essentials
 apt-get install nano wget curl zip unzip tar gzip p7zip-full bc rc openssl cron net-tools dnsutils dos2unix screen bzip2 ccrypt -y
  
 # Now installing all our wanted services
 apt-get install dropbear stunnel4 privoxy ca-certificates nginx ruby apt-transport-https lsb-release squid screenfetch -y
-
-apt install tuned -y
-systemctl enable tuned
-systemctl restart tuned
-tuned-adm profile throughput-performance
 
 # Installing all required packages to install Webmin
 apt-get install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python dbus libxml-parser-perl -y
@@ -709,6 +1058,41 @@ mySquid
 sed -i "s|SquidCacheHelper|$Proxy_Port1|g" /etc/squid/squid.conf
 sed -i "s|SquidCacheHelper|$Proxy_Port2|g" /etc/squid/squid.conf
 
+rm -rf /lib/systemd/system/nginx.service
+cat << EOF >/etc/systemd/system/nginx.service
+[Unit]
+Description=NGINX
+After=network.target
+[Service]
+Type=forking
+PIDFile=/run/nginx.pid
+ExecStartPre=/usr/sbin/nginx -t
+ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf
+ExecReload=/usr/sbin/nginx -s reload
+ExecStop=/bin/kill -s QUIT \$MAINPID
+ExecStopPost=$(which rm) -f /run/nginx.pid
+KillMode=process
+Restart=on-failure
+AmbientCapabilities=CAP_NET_RAW CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+LimitNOFILE=1000000
+LimitNPROC=infinity
+LimitCORE=infinity
+PrivateTmp=false
+NoNewPrivileges=yes
+Nice=-5
+[Install]
+WantedBy=multi-user.target
+EOF
+mkdir -p "/etc/systemd/system/nginx.service.d"
+printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" >/etc/systemd/system/nginx.service.d/override.conf
+
+if [[ $virtVC == "container" ]]; then
+sed -i '/Nice=/d' /etc/systemd/system/nginx.service
+fi
+
+ln -sf /etc/systemd/system/nginx.service /lib/systemd/system/nginx.service >/dev/null 2>&1
+systemctl daemon-reload 
+
 # Creating nginx config for our ovpn config downloads webserver
 cat <<'myNginxC' > /etc/nginx/conf.d/alien-config.conf
 # My OpenVPN Config Download Directory
@@ -916,42 +1300,6 @@ cd ~
 
 # Turning Off Multi-login Auto Kill
 rm -f /etc/cron.d/set_multilogin_autokill_lib
-
-sed -i '/fs.file-max/d' /etc/sysctl.conf
-sed -i '/fs.inotify.max_user_instances/d' /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_syncookies/d' /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_fin_timeout/d' /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_tw_reuse/d' /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_max_syn_backlog/d' /etc/sysctl.conf
-sed -i '/net.ipv4.ip_local_port_range/d' /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_max_tw_buckets/d' /etc/sysctl.conf
-sed -i '/net.ipv4.route.gc_timeout/d' /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_synack_retries/d' /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_syn_retries/d' /etc/sysctl.conf
-sed -i '/net.core.somaxconn/d' /etc/sysctl.conf
-sed -i '/net.core.netdev_max_backlog/d' /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_timestamps/d' /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_max_orphans/d' /etc/sysctl.conf
-sed -i '/net.ipv4.ip_forward/d' /etc/sysctl.conf
-echo "fs.file-max = 1000000
-echo "net.core.default_qdisc=fq"
-echo "net.ipv4.tcp_congestion_control=bbr"
-fs.inotify.max_user_instances = 8192
-net.ipv4.tcp_syncookies = 1
-net.ipv4.tcp_fin_timeout = 30
-net.ipv4.tcp_tw_reuse = 1
-net.ipv4.ip_local_port_range = 1024 65000
-net.ipv4.tcp_max_syn_backlog = 16384
-net.ipv4.tcp_max_tw_buckets = 6000
-net.ipv4.route.gc_timeout = 100
-net.ipv4.tcp_syn_retries = 1
-net.ipv4.tcp_synack_retries = 1
-net.core.somaxconn = 32768
-net.core.netdev_max_backlog = 32768
-net.ipv4.tcp_timestamps = 0
-net.ipv4.tcp_max_orphans = 32768
-# forward ipv4
-net.ipv4.ip_forward = 1">>/etc/sysctl.conf
 
 # remove unnecessary files
 cd
