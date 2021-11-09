@@ -152,29 +152,9 @@ systemctl enable --now haveged
 systemctl mask --now systemd-resolved
 systemctl daemon-reload
 
-echo "en_US.UTF-8 UTF-8" >/etc/locale.gen
-cat << EOF >/etc/default/locale
-LANG=en_US.UTF-8
-LANGUAGE=en_US.UTF-8
-LC_CTYPE="en_US.UTF-8"
-LC_NUMERIC="en_US.UTF-8"
-LC_TIME="en_US.UTF-8"
-LC_COLLATE="en_US.UTF-8"
-LC_MONETARY="en_US.UTF-8"
-LC_MESSAGES="en_US.UTF-8"
-LC_PAPER="en_US.UTF-8"
-LC_NAME="en_US.UTF-8"
-LC_ADDRESS="en_US.UTF-8"
-LC_TELEPHONE="en_US.UTF-8"
-LC_MEASUREMENT="en_US.UTF-8"
-LC_IDENTIFICATION="en_US.UTF-8"
-LC_ALL=en_US.UTF-8
-EOF
-locale-gen en_US.UTF-8
 echo "Asia/Kuala_Lumpur" >/etc/timezone
 ln -fs /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime
 
-if [[ $virtVC == "vm" ]]; then
 modprobe nf_conntrack
 modprobe xt_conntrack
 modprobe ip_conntrack
@@ -342,11 +322,9 @@ rm -rf /run/resolvconf/interface
 cat << EOF >/etc/resolvconf/resolv.conf.d/head
 nameserver 127.0.0.1
 EOF
-if [[ -f "/etc/resolvconf/run/resolv.conf" ]]; then
 ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
-elif [[ -f "/run/resolvconf/resolv.conf" ]]; then
 ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
-fi
+
 resolvconf -u
  
 # Installing some important machine essentials
