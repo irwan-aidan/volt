@@ -85,12 +85,12 @@ systemctl start rc-local.service
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
 
-cat << EOF >/etc/apt/sources.list
+cat << xxx >/etc/apt/sources.list
 deb http://cloudfront.debian.net/debian buster main contrib non-free
 deb http://cloudfront.debian.net/debian buster-updates main contrib non-free
 deb http://cloudfront.debian.net/debian buster-backports main contrib non-free
 deb http://cloudfront.debian.net/debian buster-security main contrib non-free
-EOF
+xxx
 
 apt-get update
 apt-get upgrade -y
@@ -102,7 +102,7 @@ apt install fail2ban -y
 apt-get remove --purge ufw firewalld -y
 apt-get remove --purge exim4 -y
 
-cat << EOF >/etc/security/limits.conf
+cat << zzz >/etc/security/limits.conf
 * soft nofile 1000000
 * hard nofile 1000000
 root soft nofile 1000000
@@ -115,7 +115,7 @@ root hard nproc unlimited
 * hard core unlimited
 root soft core unlimited
 root hard core unlimited
-EOF
+zzz
 
 dpkg --configure -a
 
@@ -170,7 +170,7 @@ sed -i '/nf_nat/d' /etc/modules-load.d/modules.conf
 sed -i '/xt_nat/d' /etc/modules-load.d/modules.conf
 sed -i '/iptable_nat/d' /etc/modules-load.d/modules.conf
 sed -i '/ip_tables/d' /etc/modules-load.d/modules.conf
-cat << EOF >>/etc/modules-load.d/modules.conf
+cat << rrr >>/etc/modules-load.d/modules.conf
 nf_conntrack
 xt_conntrack
 ip_conntrack
@@ -178,9 +178,9 @@ nf_nat
 xt_nat
 iptable_nat
 ip_tables
-EOF
+rrr
 
-cat << EOF >/etc/sysctl.conf
+cat << lll >/etc/sysctl.conf
 kernel.sched_energy_aware = 1
 kernel.sysrq = 0
 kernel.panic = 0
@@ -305,27 +305,7 @@ net.ipv4.tcp_autocorking = 1
 net.ipv4.tcp_slow_start_after_idle = 0
 net.core.default_qdisc = fq
 net.ipv4.tcp_congestion_control = bbr
-EOF
-
-rm -rf /etc/resolv.conf
-cat << EOF >/etc/resolv.conf
-nameserver 1.1.1.1
-nameserver 8.8.8.8
-EOF
-
-rm -rf /etc/resolvconf/resolv.conf.d/*
->/etc/resolvconf/resolv.conf.d/original
->/etc/resolvconf/resolv.conf.d/base
->/etc/resolvconf/resolv.conf.d/tail
-rm -rf /etc/resolv.conf
-rm -rf /run/resolvconf/interface
-cat << EOF >/etc/resolvconf/resolv.conf.d/head
-nameserver 127.0.0.1
-EOF
-ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
-ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
-
-resolvconf -u
+lll
  
 # Installing some important machine essentials
 apt-get install nano wget curl zip unzip tar gzip p7zip-full bc rc openssl cron net-tools dnsutils dos2unix screen bzip2 ccrypt -y
@@ -361,6 +341,26 @@ echo "deb http://build.openvpn.net/debian/openvpn/stable $(lsb_release -sc) main
 wget -qO security-openvpn-net.asc "https://keys.openpgp.org/vks/v1/by-fingerprint/F554A3687412CFFEBDEFE0A312F5F7B42F2B01E7" && gpg --import security-openvpn-net.asc
 apt-get update -y
 apt-get install openvpn -y
+
+rm -rf /etc/resolv.conf
+cat << dns >/etc/resolv.conf
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+dns
+
+rm -rf /etc/resolvconf/resolv.conf.d/*
+>/etc/resolvconf/resolv.conf.d/original
+>/etc/resolvconf/resolv.conf.d/base
+>/etc/resolvconf/resolv.conf.d/tail
+rm -rf /etc/resolv.conf
+rm -rf /run/resolvconf/interface
+cat << bbh >/etc/resolvconf/resolv.conf.d/head
+nameserver 127.0.0.1
+bbh
+ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
+ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
+
+resolvconf -u
 
 # Removing some duplicated sshd server configs
 rm -f /etc/ssh/sshd_config*
