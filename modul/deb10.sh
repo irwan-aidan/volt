@@ -102,6 +102,18 @@ apt install fail2ban -y
 apt-get remove --purge ufw firewalld -y
 apt-get remove --purge exim4 -y
 
+blue "-----------------------"
+blue  "Install bbrplus [done]"
+blue "-----------------------"
+exit
+else
+  echo -n "$statusFailed" && red "bbrplus kernel install failed"
+  exit
+fi
+elif [[ $BBRplusConfirm = "" ]] && [[ $virtVC == "container" ]]; then
+  bash <(wget --no-check-certificate -qO- https://github.com/mzz2017/lkl-haproxy/raw/master/lkl-haproxy.sh)
+fi
+
 source /etc/profile
 cat << EOF >~/.bash_profile
 PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
