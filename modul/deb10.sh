@@ -336,11 +336,6 @@ echo "neofetch -p -A Android" >> .profile
 echo "echo 'DARKNET PREM SCRIPT '" >> .profile
 echo "echo 't.me/cyberbossz '" >> .profile
 
-echo "deb http://build.openvpn.net/debian/openvpn/stable $(lsb_release -sc) main" >/etc/apt/sources.list.d/openvpn.list && apt-key del E158C569 && wget -O - https://swupdate.openvpn.net/repos/repo-public.gpg | apt-key add -
-wget -qO security-openvpn-net.asc "https://keys.openpgp.org/vks/v1/by-fingerprint/F554A3687412CFFEBDEFE0A312F5F7B42F2B01E7" && gpg --import security-openvpn-net.asc
-apt-get update -y
-apt-get install openvpn -y
-
 rm -rf /etc/resolv.conf
 cat << dns >/etc/resolv.conf
 nameserver 1.1.1.1
@@ -481,6 +476,8 @@ sed -i "s|openssh_port_c|$(netstat -tlnp | grep -i ssh | awk '{print $4}' | cut 
 
 # Restarting stunnel service
 systemctl restart $StunnelDir
+
+apt -y install openvpn iptables iptables-persistent -y
 
 # Checking if openvpn folder is accidentally deleted or purged
 if [[ ! -e /etc/openvpn ]]; then
