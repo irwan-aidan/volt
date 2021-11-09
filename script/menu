@@ -16,7 +16,7 @@ jam=$(date +"%T")
 hari=$(date +"%A")
 tnggl=$(date +"%d-%B-%Y")
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "\E[41;1;30m             SYSTEM LOCAL INFO           \E[0m"
+echo -e "\E[41;1;30m              SYSTEM LOCAL INFO            \E[0m"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "Waktu          : $jam"
 echo -e "Hari           : $hari"
@@ -39,21 +39,19 @@ echo -e "$merah 2$putih. Menu-SHADOWSOCKS  $biru(SS)"
 echo -e "$merah 3$putih. Menu-SHADOWSOCKSR $biru(SSR)"
 echo -e "$merah 4$putih. Menu-WIREGUARD    $biru(WG)"
 echo -e "$merah 5$putih. Menu-V2RAY/VMESS  $biru(VMESS)"
-echo -e "$merah 6$putih. Menu-V2RAY/VLESS  $biru(VLESS)"
-echo -e "$merah 7$putih. Menu-XRAY/VMESS   $biru(VMESS)\E[0m"
-echo -e "$merah 8$putih. Menu-XRAY/VLESS   $biru(VLESS)\E[0m"
-echo -e "$merah 9$putih. Menu-TROJAN/GFW   $biru(TROJAN)\E[0m"
+echo -e "$merah 6$putih. Menu-XRAY/VLESS   $biru(XTLS)\E[0m"
+echo -e "$merah 7$putih. Menu-TROJAN/GFW   $biru(TROJAN)\E[0m"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "\E[44;1;37m         SYSTEM NAVIGATOR       \E[0m"
-echo -e "$merah 10$putih. SERVER       $biru(SERVER SETTINGS)"
-echo -e "$merah 11$putih. OPTIONS      $biru(VPN SETTINGS)"
-echo -e "$merah 12$putih. Display Info $biru(INFO)"
-echo -e "$merah 13$putih. Info script  $biru(ABOUT)"
-echo -e "$merah 14$putih. Edit banner  $biru(banner)\E[0m"
+echo -e "\E[44;1;37m            SYSTEM NAVIGATOR          \E[0m"
+echo -e "$merah 8$putih. SERVER       $biru(SERVER SETTINGS)"
+echo -e "$merah 9$putih. OPTIONS      $biru(VPN SETTINGS)"
+echo -e "$merah 10$putih. Display Info $biru(INFO)"
+echo -e "$merah 11$putih. Info script  $biru(ABOUT)"
+echo -e "$merah 12$putih. Edit banner  $biru(banner)\E[0m"
 echo -e ""
 echo -e "\e[46mTo exit the menu press CTRL + C \E[0m"
 echo -e "$putih━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\E[0m"
-read -p "   Select from options [1-14]: " Menu
+read -p "   Select from options [1-12]: " Menu
 echo -e ""
 case $Menu in
 		1)
@@ -83,50 +81,40 @@ case $Menu in
 		;;
 		6)
 		clear
-		menu-vless
+		menu-xless
 		exit
 		;;
 		7)
 		clear
-		menu-xmess
+		menu-trojan
 		exit
 		;;
 		8)
 		clear
-		menu-xless
+		server
 		exit
 		;;
 		9)
 		clear
-		menu-trojan
+		options
 		exit
 		;;
 		10)
 		clear
-		server
+		info
 		exit
 		;;
 		11)
 		clear
-		options
+		about
 		exit
 		;;
 		12)
 		clear
-		info
-		exit
-		;;
-		13)
-		clear
-		about
-		exit
-		;;
-		14)
-		clear
 		banner
 		exit
 		;;
-		15)
+		13)
 		clear
 		exit
 		;;
