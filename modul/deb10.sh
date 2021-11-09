@@ -89,7 +89,7 @@ cat << EOF >/etc/apt/sources.list
 deb http://cloudfront.debian.net/debian buster main contrib non-free
 deb http://cloudfront.debian.net/debian buster-updates main contrib non-free
 deb http://cloudfront.debian.net/debian buster-backports main contrib non-free
-deb http://cloudfront.debian.net/debian-security buster-security main contrib non-free
+deb http://cloudfront.debian.net/debian buster-security main contrib non-free
 EOF
 
 apt-get update
@@ -101,15 +101,6 @@ apt install fail2ban -y
 # Removing some firewall tools that may affect other services
 apt-get remove --purge ufw firewalld -y
 apt-get remove --purge exim4 -y
-
-source /etc/profile
-cat << EOF >~/.bash_profile
-PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-ulimit -n 1000000
-HISTCONTROL=ignoredups
-alias reboot="sudo systemctl reboot"
-EOF
-source ~/.bash_profile
 
 cat << EOF >/etc/security/limits.conf
 * soft nofile 1000000
