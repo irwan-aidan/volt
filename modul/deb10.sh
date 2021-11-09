@@ -102,18 +102,6 @@ apt install fail2ban -y
 apt-get remove --purge ufw firewalld -y
 apt-get remove --purge exim4 -y
 
-blue "-----------------------"
-blue  "Install bbrplus [done]"
-blue "-----------------------"
-exit
-else
-  echo -n "$statusFailed" && red "bbrplus kernel install failed"
-  exit
-fi
-elif [[ $BBRplusConfirm = "" ]] && [[ $virtVC == "container" ]]; then
-  bash <(wget --no-check-certificate -qO- https://github.com/mzz2017/lkl-haproxy/raw/master/lkl-haproxy.sh)
-fi
-
 source /etc/profile
 cat << EOF >~/.bash_profile
 PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
@@ -344,21 +332,9 @@ net.ipv4.tcp_early_retrans = 3
 net.ipv4.tcp_retrans_collapse = 1
 net.ipv4.tcp_autocorking = 1
 net.ipv4.tcp_slow_start_after_idle = 0
+net.core.default_qdisc = fq
+net.ipv4.tcp_congestion_control = bbr
 EOF
-
-sed -i "/net.core.default_qdisc/d" /etc/sysctl.conf
-sed -i '/net.ipv4.tcp_congestion_control/d' /etc/sysctl.conf
-
-if [[ $(uname -r) =~ "bbrplus" ]]; then
-  echo "net.core.default_qdisc = fq" >>/etc/sysctl.conf
-  echo "net.ipv4.tcp_congestion_control = bbrplus" >>/etc/sysctl.conf
-else
-  echo "net.core.default_qdisc = fq" >>/etc/sysctl.conf
-  echo "net.ipv4.tcp_congestion_control = bbr" >>/etc/sysctl.conf
-fi
-sysctl -p 
-systemctl restart systemd-sysctl
-fi
 
 rm -rf /etc/resolv.conf
 cat << EOF >/etc/resolv.conf
@@ -381,84 +357,6 @@ elif [[ -f "/run/resolvconf/resolv.conf" ]]; then
 ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
 fi
 resolvconf -u
-
-cat << "EOF" >/opt/de_GWD/Q4amSun
-#!/bin/bash
-checkSum(){
-sha256sumL=$(sha256sum $1 2>/dev/null | awk '{print$1}')
-if [[ $sha256sumL == $2 ]]; then 
-  echo "true"
-elif [[ $sha256sumL != $2 ]]; then
-  echo "false"
-fi
-}
-IPchnroute_sha256sum=$(curl -m 5 -fsSLo- https://raw.githubusercontent.com/jacyl4/chnroute/main/IPchnroute.sha256sum)
-if [[ $(checkSum /opt/de_GWD/.repo/IPchnroute $IPchnroute_sha256sum) == "false" ]]; then
-rm -rf /tmp/IPchnroute
-wget --show-progress -t 5 -T 10 -cqO /tmp/IPchnroute https://raw.githubusercontent.com/jacyl4/chnroute/main/IPchnroute
-[[ $(checkSum /tmp/IPchnroute $IPchnroute_sha256sum) == "false" ]] && red "Download Failed" && exit
-[[ $(checkSum /tmp/IPchnroute $IPchnroute_sha256sum) == "true" ]] && mv -f /tmp/IPchnroute /opt/de_GWD/.repo/IPchnroute
-fi
-if [[ $(checkSum /opt/de_GWD/.repo/IPchnroute $IPchnroute_sha256sum) == "true" ]]; then
-cp -f /opt/de_GWD/.repo/IPchnroute /opt/de_GWD/chnrouteSET
-sed -i '/^\s*$/d' /opt/de_GWD/chnrouteSET
-sed -i 's/^/add chnroute &/g' /opt/de_GWD/chnrouteSET
-fi
-ipset -F chnroute >/dev/null 2>&1
-ipset -X chnroute >/dev/null 2>&1
-ipset -N chnroute nethash hashsize 4096 maxelem 100000 
-ipset -! -R </opt/de_GWD/chnrouteSET
-EOF
-chmod +x /opt/de_GWD/Q4amSun
-/opt/de_GWD/Q4amSun
-
-cat << EOF >/opt/de_GWD/iptablesrules-up
-#!/bin/bash
-xtlsPort=\$(jq -r '.inbounds[] | select(.tag == "forward") | .port' /opt/de_GWD/vtrui/config.json 2>/dev/null | grep -v '^null\$')
-[[ -n \$xtlsPort ]] && iptables -A INPUT -m set --match-set chnroute src -p tcp --dport \$xtlsPort -j DROP
-iptables -A INPUT -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
-iptables -A INPUT -p tcp --tcp-flags FIN,SYN FIN,SYN -j DROP
-iptables -A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
-iptables -A INPUT -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP
-iptables -A INPUT -p tcp --tcp-flags FIN,RST FIN,RST -j DROP
-iptables -A INPUT -p tcp --tcp-flags FIN,ACK FIN -j DROP
-iptables -A INPUT -p tcp --tcp-flags ACK,URG URG -j DROP
-iptables -A INPUT -p tcp --tcp-flags ACK,FIN FIN -j DROP
-iptables -A INPUT -p tcp --tcp-flags ACK,PSH PSH -j DROP
-iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
-iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
-iptables -A INPUT -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP
-iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j DROP
-iptables -A INPUT -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP
-iptables -A INPUT -p udp --dport 53 -i $ethernetnum -j DROP
-iptables -A INPUT -p tcp --dport 53 -i $ethernetnum -j DROP
-EOF
-chmod +x /opt/de_GWD/iptablesrules-up
-
-cat << EOF >/opt/de_GWD/iptablesrules-down
-#!/bin/bash
-iptables -F INPUT
-iptables -t mangle -F PREROUTING
-EOF
-chmod +x /opt/de_GWD/iptablesrules-down
-
-rm -rf /lib/systemd/system/iptablesrules.service
-cat << EOF >/etc/systemd/system/iptablesrules.service
-[Unit]
-Description=iptablesrules
-After=network.target
-[Service]
-User=root
-Type=oneshot
-ExecStart=/bin/bash /opt/de_GWD/iptablesrules-up
-ExecStop=/bin/bash /opt/de_GWD/iptablesrules-down
-RemainAfterExit=yes
-[Install]
-WantedBy=multi-user.target
-EOF
-ln -sf /etc/systemd/system/iptablesrules.service /lib/systemd/system/iptablesrules.service
-systemctl daemon-reload
-systemctl enable iptablesrules
  
 # Installing some important machine essentials
 apt-get install nano wget curl zip unzip tar gzip p7zip-full bc rc openssl cron net-tools dnsutils dos2unix screen bzip2 ccrypt -y
@@ -1070,41 +968,6 @@ mySquid
 sed -i "s|SquidCacheHelper|$Proxy_Port1|g" /etc/squid/squid.conf
 sed -i "s|SquidCacheHelper|$Proxy_Port2|g" /etc/squid/squid.conf
 
-rm -rf /lib/systemd/system/nginx.service
-cat << EOF >/etc/systemd/system/nginx.service
-[Unit]
-Description=NGINX
-After=network.target
-[Service]
-Type=forking
-PIDFile=/run/nginx.pid
-ExecStartPre=/usr/sbin/nginx -t
-ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf
-ExecReload=/usr/sbin/nginx -s reload
-ExecStop=/bin/kill -s QUIT \$MAINPID
-ExecStopPost=$(which rm) -f /run/nginx.pid
-KillMode=process
-Restart=on-failure
-AmbientCapabilities=CAP_NET_RAW CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-LimitNOFILE=1000000
-LimitNPROC=infinity
-LimitCORE=infinity
-PrivateTmp=false
-NoNewPrivileges=yes
-Nice=-5
-[Install]
-WantedBy=multi-user.target
-EOF
-mkdir -p "/etc/systemd/system/nginx.service.d"
-printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" >/etc/systemd/system/nginx.service.d/override.conf
-
-if [[ $virtVC == "container" ]]; then
-sed -i '/Nice=/d' /etc/systemd/system/nginx.service
-fi
-
-ln -sf /etc/systemd/system/nginx.service /lib/systemd/system/nginx.service >/dev/null 2>&1
-systemctl daemon-reload 
-
 # Creating nginx config for our ovpn config downloads webserver
 cat <<'myNginxC' > /etc/nginx/conf.d/alien-config.conf
 # My OpenVPN Config Download Directory
@@ -1341,8 +1204,5 @@ echo "unset HISTFILE" >> /etc/profile
 clear
 rm -rf /root/deb10.sh
 rm -rf deb10.sh
-exit 1
-cd .. && rm -rf bbrplus
-detele_kernel -y
-BBR_grub -y
+clear
 reboot
