@@ -8,9 +8,31 @@ biru="\e[1;34m"
 putih="\e[1;37m"
 cyan="\e[1;36m"
 clear
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+ISP=$(curl -s ipinfo.io/org | cut -d " " -f 2-10 )
+CITY=$(curl -s ipinfo.io/city )
+WKT=$(curl -s ipinfo.io/timezone )
+IPVPS=$(curl -s ipinfo.io/ip )
+jam=$(date +"%T")
+hari=$(date +"%A")
+tnggl=$(date +"%d-%B-%Y")
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "\E[41;1;30m             SYSTEM LOCAL INFO           \E[0m"
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "Waktu          : $jam"
+echo -e "Hari           : $hari"
+echo -e "Bulan          : $tnggl"
+echo -e "ISP Name       : $ISP"
+echo -e "City           : $CITY"
+echo -e "IP VPS         : $IPVPS"
+echo -e "DOMAIN/HOST    : $DOMAIN"
+echo -e ""
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "\E[44;1;37m* Script       : VoltNet Premium Script \E[0m"
+echo -e "\E[44;1;37m* menu         : List of Main Commands \E[0m"
+echo -e ""
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "\E[41;1;30m             MENU PREMIUM SCRIPT           \E[0m"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "\E[44;1;37m             ALL PREMIUM MENU              \E[0m"
 echo -e "$merah 1$putih. Menu-Vpn          $biru(SSH/OVPN)"
 echo -e "$merah 2$putih. Menu-SHADOWSOCKS  $biru(SS)"
@@ -21,7 +43,7 @@ echo -e "$merah 6$putih. Menu-V2RAY/VLESS  $biru(VLESS)"
 echo -e "$merah 7$putih. Menu-XRAY/VMESS   $biru(VMESS)\E[0m"
 echo -e "$merah 8$putih. Menu-XRAY/VLESS   $biru(VLESS)\E[0m"
 echo -e "$merah 9$putih. Menu-TROJAN/GFW   $biru(TROJAN)\E[0m"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "\E[44;1;37m         SYSTEM NAVIGATOR       \E[0m"
 echo -e "$merah 10$putih. SERVER       $biru(SERVER SETTINGS)"
 echo -e "$merah 11$putih. OPTIONS      $biru(VPN SETTINGS)"
@@ -30,7 +52,7 @@ echo -e "$merah 13$putih. Info script  $biru(ABOUT)"
 echo -e "$merah 14$putih. Edit banner  $biru(banner)\E[0m"
 echo -e ""
 echo -e "\e[46mTo exit the menu press CTRL + C \E[0m"
-echo -e "$putih━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\E[0m"
+echo -e "$putih━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\E[0m"
 read -p "   Select from options [1-14]: " Menu
 echo -e ""
 case $Menu in
