@@ -301,8 +301,6 @@ net.ipv4.tcp_early_retrans = 3
 net.ipv4.tcp_retrans_collapse = 1
 net.ipv4.tcp_autocorking = 1
 net.ipv4.tcp_slow_start_after_idle = 0
-net.core.default_qdisc = fq
-net.ipv4.tcp_congestion_control = bbr
 lll
  
 # Installing some important machine essentials
