@@ -352,10 +352,9 @@ rm -rf /etc/resolvconf/resolv.conf.d/*
 >/etc/resolvconf/resolv.conf.d/original
 >/etc/resolvconf/resolv.conf.d/base
 >/etc/resolvconf/resolv.conf.d/tail
-rm -rf /etc/resolv.conf
-rm -rf /run/resolvconf/interface
 cat << bbh >/etc/resolvconf/resolv.conf.d/head
-nameserver 127.0.0.1
+nameserver 1.1.1.1
+nameserver 8.8.8.8
 bbh
 ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
 ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
