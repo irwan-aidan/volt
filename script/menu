@@ -34,7 +34,7 @@ echo -e "━━━━━━━━━━━━━━━━━━━━━━━�
 echo -e "\E[41;1;30m             MENU PREMIUM SCRIPT           \E[0m"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "\E[44;1;37m             ALL PREMIUM MENU              \E[0m"
-echo -e "$merah 1$putih. Menu-Vpn          $biru(SSH/OVPN)"
+echo -e "$merah 1$putih. Menu-VPN          $biru(SSH/OVPN)"
 echo -e "$merah 2$putih. Menu-SHADOWSOCKS  $biru(SS)"
 echo -e "$merah 3$putih. Menu-SHADOWSOCKSR $biru(SSR)"
 echo -e "$merah 4$putih. Menu-WIREGUARD    $biru(WG)"
