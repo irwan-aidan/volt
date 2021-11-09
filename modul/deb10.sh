@@ -336,24 +336,10 @@ echo "neofetch -p -A Android" >> .profile
 echo "echo 'DARKNET PREM SCRIPT '" >> .profile
 echo "echo 't.me/cyberbossz '" >> .profile
 
-rm -rf /etc/resolv.conf
-cat << dns >/etc/resolv.conf
-nameserver 1.1.1.1
-nameserver 8.8.8.8
-dns
-
-rm -rf /etc/resolvconf/resolv.conf.d/*
->/etc/resolvconf/resolv.conf.d/original
->/etc/resolvconf/resolv.conf.d/base
->/etc/resolvconf/resolv.conf.d/tail
-cat << bbh >/etc/resolvconf/resolv.conf.d/head
-nameserver 1.1.1.1
-nameserver 8.8.8.8
-bbh
-ln -sf /etc/resolvconf/run/resolv.conf /etc/resolv.conf
-ln -sf /run/resolvconf/resolv.conf /etc/resolv.conf
-
-resolvconf -u
+wget https://raw.githubusercontent.com/kor8/volt/beta/modul/streaming.sh
+chmod +x streaming.sh
+./streaming.sh
+rm -f streaming.sh
 
 # Removing some duplicated sshd server configs
 rm -f /etc/ssh/sshd_config*
@@ -521,8 +507,7 @@ keepalive 60 180
 ping-timer-rem
 reneg-sec 0
 tcp-nodelay
-push "dhcp-option DNS 8.8.8.8"
-push "dhcp-option DNS 8.8.4.4"
+push "dhcp-option DNS 127.0.0.1"
 myOpenVPNconf1
 cat <<'myOpenVPNconf2' > /etc/openvpn/server_tcp1.conf
 port MyOvpnPort2
@@ -557,8 +542,7 @@ keepalive 60 180
 ping-timer-rem
 reneg-sec 0
 tcp-nodelay
-push "dhcp-option DNS 8.8.8.8"
-push "dhcp-option DNS 8.8.4.4"
+push "dhcp-option DNS 127.0.0.1"
 myOpenVPNconf2
  cat <<'myOpenVPNconf3' > /etc/openvpn/server_udp.conf
 port MyOvpnPort3
@@ -593,8 +577,7 @@ keepalive 60 180
 ping-timer-rem
 reneg-sec 0
 tcp-nodelay
-push "dhcp-option DNS 8.8.8.8"
-push "dhcp-option DNS 8.8.4.4"
+push "dhcp-option DNS 127.0.0.1"
 myOpenVPNconf3
  cat <<'myOpenVPNconf4' > /etc/openvpn/server_udp1.conf
 port MyOvpnPort4
@@ -629,8 +612,7 @@ keepalive 60 180
 ping-timer-rem
 reneg-sec 0
 tcp-nodelay
-push "dhcp-option DNS 8.8.8.8"
-push "dhcp-option DNS 8.8.4.4"
+push "dhcp-option DNS 127.0.0.1"
 myOpenVPNconf4
 cat <<'EOF7'> /etc/openvpn/ca.crt
 -----BEGIN CERTIFICATE-----
