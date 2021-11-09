@@ -133,23 +133,23 @@ if [ $? -eq 0 ]; then
     touch /etc/dnsmasq.d/unlock.conf
     echo "server=8.8.8.8" > /etc/dnsmasq.d/unlock.conf
     echo "server=8.8.4.4" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/netflix.com/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/netflix.net/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/nflximg.net/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/nflximg.com/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/nflxvideo.net/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/nflxso.net/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/nflxext.com/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/scdn.co/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/spotify.com/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/spoti.fi/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/hulu.com/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/huluim.com/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/hbo.com/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/hbogoasia.hk/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/hbogo.com/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/hbonow.com/$1" >> /etc/dnsmasq.d/unlock.conf
-    echo "server=/hboasia.com/$1" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/netflix.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/netflix.net/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/nflximg.net/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/nflximg.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/nflxvideo.net/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/nflxso.net/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/nflxext.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/scdn.co/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/spotify.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/spoti.fi/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/hulu.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/huluim.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/hbo.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/hbogoasia.hk/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/hbogo.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/hbonow.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
+    echo "server=/hboasia.com/8.8.8.8" >> /etc/dnsmasq.d/unlock.conf
 
     systemctl restart dnsmasq
     echo "dnsmasq started successfully"
