@@ -32,7 +32,7 @@ systemctl enable xray
 systemctl restart xray
 
 #MENU XRAY
-wget -qO /usr/bin/xray-script "https://raw.githubusercontent.com/kor8/volt/beta/script2/menu-xray.sh"
-chmod +x /usr/bin/xray-script
+wget -qO /usr/bin/menu-xray "https://raw.githubusercontent.com/kor8/volt/beta/script2/menu-xray.sh"
+chmod +x /usr/bin/menu-xray
 
 
