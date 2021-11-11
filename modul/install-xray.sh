@@ -11,13 +11,15 @@ rm -rf /var/www/html/*
 tar xzf web.tar.gz -C /var/www/html
 rm -f web.tar.gz
 mkdir /dani/xray
-curl -L get.acme.sh | bash
-/root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+mkdir /root/.acme.sh
+curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
+chmod +x /root/.acme.sh/acme.sh
 sed -i "6s/^/#/" /etc/nginx/conf.d/${domain}.conf
 sed -i "6a\\\troot /var/www/html/;" /etc/nginx/conf.d/${domain}.conf
 systemctl restart nginx
+systemctl stop nginx
 /root/.acme.sh/acme.sh --issue -d "${domain}" --webroot "/var/www/html/" -k ec-256 --force
-/root/.acme.sh/acme.sh --installcert -d "${domain}" --fullchainpath /dani/xray/xray.crt --keypath /dani/xray/xray.key --reloadcmd "systemctl restart xray" --ecc --force
+~/.acme.sh/acme.sh --install-cert -d $domain --fullchainpath /dani/xray/xray.crt --keypath /dani/xray/xray.key --ecc
 sed -i "7d" /etc/nginx/conf.d/${domain}.conf
 sed -i "6s/#//" /etc/nginx/conf.d/${domain}.conf
 chown -R nobody.nogroup /dani/xray/xray.crt
@@ -32,7 +34,9 @@ systemctl enable xray
 systemctl restart xray
 
 #MENU XRAY
-wget -qO /usr/local/menu-xray "https://raw.githubusercontent.com/kor8/volt/beta/script2/menu-xray.sh"
-chmod +x /usr/local/menu-xray
+cd /usr/local
+wget -O menu-xtls "https://raw.githubusercontent.com/kor8/volt/beta/script2/menu-xray.sh"
+chmod +x menu-xtls
+cd
 
 
