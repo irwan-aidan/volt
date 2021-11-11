@@ -18,7 +18,7 @@ sed -i "6s/^/#/" /etc/nginx/conf.d/${domain}.conf
 sed -i "6a\\\troot /var/www/html/;" /etc/nginx/conf.d/${domain}.conf
 systemctl restart nginx
 systemctl stop nginx
-/root/.acme.sh/acme.sh --issue -d "${domain}" --webroot "/var/www/html/" -k ec-256 --force
+/root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
 ~/.acme.sh/acme.sh --install-cert -d $domain --fullchainpath /dani/xray/xray.crt --keypath /dani/xray/xray.key --ecc
 sed -i "7d" /etc/nginx/conf.d/${domain}.conf
 sed -i "6s/#//" /etc/nginx/conf.d/${domain}.conf
