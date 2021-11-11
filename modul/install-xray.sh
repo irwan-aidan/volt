@@ -1,7 +1,19 @@
 # Install Xray
+domain=$(cat /root/domain)
+apt install iptables iptables-persistent -y
+apt install curl socat xz-utils wget apt-transport-https gnupg gnupg2 gnupg1 dnsutils lsb-release -y 
+apt install socat cron bash-completion ntpdate -y
+ntpdate pool.ntp.org
+apt -y install chrony
+timedatectl set-ntp true
+systemctl enable chronyd && systemctl restart chronyd
+systemctl enable chrony && systemctl restart chrony
+timedatectl set-timezone Asia/Kuala_Lumpur
+chronyc sourcestats -v
+chronyc tracking -v
+date
 apt-get install -y lsb-release gnupg2 wget lsof tar unzip curl libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev jq nginx uuid-runtime
 curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh | bash -s -- install
-echo $domain > /usr/local/etc/xray/domain
 wget -qO /usr/local/etc/xray/config.json "https://raw.githubusercontent.com/kor8/volt/beta/modul/xray.json"
 wget -qO /etc/nginx/conf.d/${domain}.conf "https://raw.githubusercontent.com/kor8/volt/beta/modul/web.conf"
 sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/${domain}.conf
