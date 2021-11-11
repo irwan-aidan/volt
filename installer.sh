@@ -36,7 +36,6 @@ chmod +x deb10.sh
 #Removing Installer File
 rm -f /root/install-xray.sh
 rm -f /root/deb10.sh
-rm -f /root/install-xray.sh
 history -c
 echo "1.1" > /home/ver
 clear
