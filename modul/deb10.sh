@@ -799,15 +799,14 @@ echo 'net.ipv4.ip_forward=1' > /etc/sysctl.d/20-openvpn.conf && sysctl --system 
 
 systemctl stop ufw
 systemctl disable ufw
-iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o $ANU -j SNAT --to xxxxxxxxx
-iptables -t nat -A POSTROUTING -s 192.168.2.0/24 -o $ANU -j SNAT --to xxxxxxxxx
-iptables -t nat -A POSTROUTING -s 192.168.3.0/24 -o $ANU -j SNAT --to xxxxxxxxx
-iptables -t nat -A POSTROUTING -s 192.168.4.0/24 -o $ANU -j SNAT --to xxxxxxxxx
+iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o $ANU -j SNAT --to $MYIP
+iptables -t nat -A POSTROUTING -s 192.168.2.0/24 -o $ANU -j SNAT --to $MYIP
+iptables -t nat -A POSTROUTING -s 192.168.3.0/24 -o $ANU -j SNAT --to $MYIP
+iptables -t nat -A POSTROUTING -s 192.168.4.0/24 -o $ANU -j SNAT --to $MYIP
 iptables -t nat -I POSTROUTING -s 192.168.1.0/24 -o $ANU -j MASQUERADE
 iptables -t nat -I POSTROUTING -s 192.168.2.0/24 -o $ANU -j MASQUERADE
 iptables -t nat -I POSTROUTING -s 192.168.3.0/24 -o $ANU -j MASQUERADE
 iptables -t nat -I POSTROUTING -s 192.168.4.0/24 -o $ANU -j MASQUERADE
-iptables -A INPUT -s $(wget -4qO- http://ipinfo.io/ip) -p tcp -m multiport --dport 1:65535 -j ACCEPT
 iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 iptables -I OUTPUT -o eth0 -d 0.0.0.0/0 -j ACCEPT
 iptables-save > /etc/iptables.up.rules
