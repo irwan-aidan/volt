@@ -904,26 +904,11 @@ mySquid
 sed -i "s|SquidCacheHelper|$Proxy_Port1|g" /etc/squid/squid.conf
 sed -i "s|SquidCacheHelper|$Proxy_Port2|g" /etc/squid/squid.conf
 
-# Creating nginx config for our ovpn config downloads webserver
-cat <<'myNginxC' > /etc/nginx/conf.d/alien-config.conf
-# My OpenVPN Config Download Directory
-server {
- listen 0.0.0.0:88;
- server_name localhost;
- root /home/vps/public_html;
- index index.html;
-}
-myNginxC
-
-# Removing Default nginx page(port 80)
-rm -rf /etc/nginx/sites-*
-
 # Creating our root directory for all of our .ovpn configs
-rm -rf /var/www/openvpn
-mkdir -p /home/vps/public_html
+mkdir -p /dani/openvpn
 
 # Now creating all of our OpenVPN Configs 
-cat <<vpn1> /home/vps/public_html/alien-tcp1.ovpn
+cat <<vpn1> /dani/openvpn/alien-tcp1.ovpn
 # Premium Script Ovpn
 # AlienVpn
 client
@@ -945,7 +930,7 @@ setenv CLIENT_CERT 0
 $(cat /etc/openvpn/ca.crt)
 </ca>
 vpn1
-cat <<vpn2> /home/vps/public_html/alien-tcp2.ovpn
+cat <<vpn2> /dani/openvpn/alien-tcp2.ovpn
 # Premium Script Ovpn
 # AlienVpn
 client
@@ -967,7 +952,7 @@ setenv CLIENT_CERT 0
 $(cat /etc/openvpn/ca.crt)
 </ca>
 vpn2
-cat <<vpn3> /home/vps/public_html/alien-udp1.ovpn
+cat <<vpn3> /dani/openvpn/alien-udp1.ovpn
 # Premium Script Ovpn
 # AlienVpn
 client
@@ -989,7 +974,7 @@ setenv CLIENT_CERT 0
 $(cat /etc/openvpn/ca.crt)
 </ca>
 vpn3
-cat <<vpn4> /home/vps/public_html/alien-udp2.ovpn
+cat <<vpn4> /dani/openvpn/alien-udp2.ovpn
 # Premium Script Ovpn
 # AlienVpn
 client
@@ -1012,7 +997,7 @@ $(cat /etc/openvpn/ca.crt)
 </ca>
 vpn4
 # Creating OVPN download site index.html
-cat <<'mySiteOvpn' > /home/vps/public_html/index.html
+cat <<'mySiteOvpn' > /dani/openvpn/index.html
 Setup By AlienVpn
 mySiteOvpn
  
@@ -1020,7 +1005,7 @@ mySiteOvpn
 systemctl restart nginx
  
 # Creating all .ovpn config archives
-cd /home/vps/public_html 
+cd /dani/openvpn 
 zip -qq -r configs.zip *.ovpn *.txt
 cd
 # install fail2ban
@@ -1138,7 +1123,4 @@ history -c
 echo "unset HISTFILE" >> /etc/profile
 # finihsing
 clear
-rm -rf /root/deb10.sh
-rm -rf deb10.sh
-clear
-reboot
+
