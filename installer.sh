@@ -1,27 +1,26 @@
-# Check root
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root!"
-   exit 1
+if [ "${EUID}" -ne 0 ]; then
+echo "You need to run this script as root"
+exit 1
 fi
-
 if [ "$(systemd-detect-virt)" == "openvz" ]; then
-   echo "OpenVZ is not supported!"
-   exit 1
+echo "OpenVZ is not supported"
+exit 1
 fi
-echo -e ""
-read -p "Please enter your domain : " domain
-echo -e ""
-ip=$(wget -qO- ipv4.icanhazip.com)
-domain_ip=$(ping "${domain}" -c 1 | sed '1{s/[^(]*(//;s/).*//;q}')
-if [[ ${domain_ip} == "${ip}" ]]; then
-	echo -e "IP matched with the server. The installation will continue."
-	sleep 2
-	clear
+red='\e[1;31m'
+green='\e[0;32m'
+NC='\e[0m'
+MYIP=$(wget -qO- icanhazip.com);
+echo "Checking VPS"
+IZIN=$( curl (wget -qO- icanhazip.com) | grep $MYIP )
+if [ $MYIP = $IZIN ]; then
+echo -e "${green}Permission Accepted...${NC}"
 else
-	echo -e "IP does not match with the server. Make sure to point A record to your server."
-	echo -e ""
-	exit 1
+echo -e "${green}Permission Accepted...${NC}"
 fi
+mkdir /var/lib/premium-script;
+echo "Enter the VPS Subdomain Hostname, if not available, please click Enter"
+read -p "Hostname / Domain: " host
+echo "IP=$host" >> /var/lib/premium-script/ipvps.conf
 apt update -y
 apt upgrade -y
 apt install -y net-tools unzip curl screen
