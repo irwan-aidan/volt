@@ -85,6 +85,7 @@ systemctl start rc-local.service
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
 
+
 cat << xxx >/etc/apt/sources.list
 deb http://cloudfront.debian.net/debian buster main contrib non-free
 deb http://cloudfront.debian.net/debian buster-updates main contrib non-free
@@ -179,6 +180,11 @@ ip_tables
 rrr
 
 cat << lll >/etc/sysctl.conf
+net.ipv6.conf.all.disable_ipv6=1
+net.ipv6.conf.default.disable_ipv6=1
+net.ipv6.conf.lo.disable_ipv6=1
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
 kernel.sched_energy_aware = 1
 kernel.sysrq = 0
 kernel.panic = 0
