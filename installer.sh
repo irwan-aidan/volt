@@ -25,15 +25,16 @@ fi
 apt update -y
 apt upgrade -y
 apt install -y net-tools unzip curl screen
-#Install Local Vpn
-wget https://raw.githubusercontent.com/kor8/volt/beta/modul/deb10.sh
-chmod +x deb10.sh
-./deb10.sh 
 #Install Xray
 wget https://raw.githubusercontent.com/kor8/volt/beta/modul/install-xray.sh
 chmod +x install-xray.sh
 ./install-xray.sh
+#Install Local Vpn
+wget https://raw.githubusercontent.com/kor8/volt/beta/modul/deb10.sh
+chmod +x deb10.sh
+./deb10.sh 
 #Removing Installer File
+rm -f /root/install-xray.sh
 rm -f /root/deb10.sh
 rm -f /root/install-xray.sh
 history -c
