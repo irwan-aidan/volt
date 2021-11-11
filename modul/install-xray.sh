@@ -54,7 +54,7 @@ systemctl enable xray
 systemctl restart xray
 
 #MENU XRAY
-cd /usr/local
+cd /usr/local/sbin
 wget -O menu-xtls "https://raw.githubusercontent.com/kor8/volt/beta/script2/menu-xray.sh"
 chmod +x menu-xtls
 cd
