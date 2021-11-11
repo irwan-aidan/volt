@@ -1,4 +1,5 @@
 # Install Xray
+#!/bin/bash
 domain=$(cat /root/domain)
 apt install iptables iptables-persistent -y
 apt install curl socat xz-utils wget apt-transport-https gnupg gnupg2 gnupg1 dnsutils lsb-release -y 
@@ -8,12 +9,21 @@ apt -y install chrony
 timedatectl set-ntp true
 systemctl enable chronyd && systemctl restart chronyd
 systemctl enable chrony && systemctl restart chrony
-timedatectl set-timezone Asia/Kuala_Lumpur
+timedatectl set-timezone Asia/Jakarta
 chronyc sourcestats -v
 chronyc tracking -v
 date
-apt-get install -y lsb-release gnupg2 wget lsof tar unzip curl libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev jq nginx uuid-runtime
+# install Xray
 curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh | bash -s -- install
+systemctl restart nginx
+systemctl stop nginx
+mkdir /dani/xray
+mkdir /root/.acme.sh
+curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
+chmod +x /root/.acme.sh/acme.sh
+/root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
+~/.acme.sh/acme.sh --install-cert -d $domain --fullchainpath /dani/xray/xray.crt --keypath /dani/xray/xray.key --ecc
+uuid=$(cat /proc/sys/kernel/random/uuid)
 wget -qO /usr/local/etc/xray/config.json "https://raw.githubusercontent.com/kor8/volt/beta/modul/xray.json"
 wget -qO /etc/nginx/conf.d/${domain}.conf "https://raw.githubusercontent.com/kor8/volt/beta/modul/web.conf"
 sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/${domain}.conf
@@ -22,16 +32,8 @@ wget -qO web.tar.gz "https://github.com/kor8/volt/raw/beta/modul/web.tar.gz"
 rm -rf /var/www/html/*
 tar xzf web.tar.gz -C /var/www/html
 rm -f web.tar.gz
-mkdir /dani/xray
-mkdir /root/.acme.sh
-curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
-chmod +x /root/.acme.sh/acme.sh
 sed -i "6s/^/#/" /etc/nginx/conf.d/${domain}.conf
 sed -i "6a\\\troot /var/www/html/;" /etc/nginx/conf.d/${domain}.conf
-systemctl restart nginx
-systemctl stop nginx
-/root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
-~/.acme.sh/acme.sh --install-cert -d $domain --fullchainpath /dani/xray/xray.crt --keypath /dani/xray/xray.key --ecc
 sed -i "7d" /etc/nginx/conf.d/${domain}.conf
 sed -i "6s/#//" /etc/nginx/conf.d/${domain}.conf
 chown -R nobody.nogroup /dani/xray/xray.crt
