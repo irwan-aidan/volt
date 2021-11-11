@@ -20,10 +20,21 @@ echo "Hanya untuk pengguna terdaftar"
 rm -f installer.sh
 exit 0
 fi
-mkdir /var/lib/premium-script;
-echo "Enter the VPS Subdomain Hostname, REQUIRED aka WAJIB"
-read -p "Hostname / Domain: " host
-echo "IP=$host" >> /var/lib/premium-script/ipvps.conf
+done
+echo -e ""
+read -p "Please enter your domain : " domain
+echo -e ""
+ip=$(wget -qO- ipv4.icanhazip.com)
+domain_ip=$(ping "${domain}" -c 1 | sed '1{s/[^(]*(//;s/).*//;q}')
+if [[ ${domain_ip} == "${ip}" ]]; then
+	echo -e "IP matched with the server. The installation will continue."
+	sleep 2
+	clear
+else
+	echo -e "IP does not match with the server. Make sure to point A record to your server."
+	echo -e ""
+	exit 1
+fi
 wget https://raw.githubusercontent.com/kor8/volt/beta/modul/deb10.sh && chmod +x deb10.sh && ./deb10.sh 
 rm -f /root/deb10.sh.sh
 history -c
