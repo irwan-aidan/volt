@@ -22,6 +22,7 @@ else
 	echo -e ""
 	exit 1
 fi
+apt install -y net-tools vnstat unzip curl screen
 #Install Local Vpn
 wget https://raw.githubusercontent.com/kor8/volt/beta/modul/deb10.sh
 chmod +x deb10.sh
