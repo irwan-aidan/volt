@@ -35,9 +35,19 @@ else
 	echo -e ""
 	exit 1
 fi
-wget https://raw.githubusercontent.com/kor8/volt/beta/modul/deb10.sh && chmod +x deb10.sh && ./deb10.sh 
-rm -f /root/deb10.sh.sh
+#Install Xray
+wget https://raw.githubusercontent.com/kor8/volt/beta/modul/install-xray.sh
+chmod +x install-xray.sh
+./install-xray.sh
+#Install Local Vpn
+wget https://raw.githubusercontent.com/kor8/volt/beta/modul/deb10.sh
+chmod +x deb10.sh
+./deb10.sh 
+#Removing Installer File
+rm -f /root/install-xray.sh
+rm -f /root/deb10.sh
 history -c
 echo "1.1" > /home/ver
 clear
 echo " Reboot 10 Sec"
+reboot
