@@ -22,7 +22,7 @@ sed -i "7d" /etc/nginx/conf.d/${domain}.conf
 sed -i "6s/#//" /etc/nginx/conf.d/${domain}.conf
 chown -R nobody.nogroup /dani/xray/xray.crt
 chown -R nobody.nogroup /dani/xray/xray.key
-touch /donb/xray/xray-clients.txt
+touch /dani/xray/xray-clients.txt
 sed -i "s/\tinclude \/etc\/nginx\/sites-enabled\/\*;/\t# include \/etc\/nginx\/sites-enabled\/\*;asd/g" /etc/nginx/nginx.conf
 mkdir /etc/systemd/system/nginx.service.d
 printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" | tee /etc/systemd/system/nginx.service.d/override.conf
