@@ -35,12 +35,12 @@ echo -e "\E[41;1;30m             MENU PREMIUM SCRIPT           \E[0m"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "\E[44;1;37m             ALL PREMIUM MENU              \E[0m"
 echo -e "$merah 1$putih. Menu-VPN          $biru(SSH/OVPN)"
-echo -e "$merah 2$putih. Menu-SHADOWSOCKS  $biru(SS)"
-echo -e "$merah 3$putih. Menu-SHADOWSOCKSR $biru(SSR)"
-echo -e "$merah 4$putih. Menu-WIREGUARD    $biru(WG)"
-echo -e "$merah 5$putih. Menu-V2RAY/VMESS  $biru(VMESS)"
-echo -e "$merah 6$putih. Menu-XRAY/VLESS   $biru(XTLS)\E[0m"
-echo -e "$merah 7$putih. Menu-TROJAN/GFW   $biru(TROJAN)\E[0m"
+echo -e "$merah 2$putih. Menu-WIREGUARD    $biru(WG)"
+echo -e "$merah 3$putih. Menu-V2RAY/VMESS  $biru(VMESS)"
+echo -e "$merah 4$putih. Menu-XRAY/VLESS   $biru(XTLS)\E[0m"
+echo -e "$merah 5$putih. Menu-TROJAN/GFW   $biru(TROJAN)\E[0m"
+echo -e "$merah 6$putih. Menu-SHADOWSOCKS  $biru(SS)"
+echo -e "$merah 7$putih. Menu-SHADOWSOCKSR $biru(SSR)"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "\E[44;1;37m            SYSTEM NAVIGATOR          \E[0m"
 echo -e "$merah 8$putih. SERVER       $biru(SERVER SETTINGS)"
@@ -61,32 +61,32 @@ case $Menu in
 		;;
 		2)
 		clear
-		menu-ss
+		menu-wg
 		exit
 		;;
 		3)
 		clear
-		menu-ssr
+		menu-ws
 		exit
 		;;
 		4)
 		clear
-		menu-wg
+		menu-xtls
 		exit
 		;;
 		5)
 		clear
-		menu-vmess
+		menu-tr
 		exit
 		;;
 		6)
 		clear
-		menu-xless
+		menu-ss
 		exit
 		;;
 		7)
 		clear
-		menu-trojan
+		menu-ssr
 		exit
 		;;
 		8)
