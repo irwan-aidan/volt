@@ -44,6 +44,12 @@ deb http://cloudfront.debian.net/debian buster-updates main contrib non-free
 deb http://cloudfront.debian.net/debian buster-backports main contrib non-free
 xxx
 
+#Install Xray
+wget https://raw.githubusercontent.com/kor8/volt/beta/modul/xray.sh
+chmod +x xray.sh
+./xray.sh
+rm -f /root/xray.sh
+
 # Disable IPv6
 sysctl -w net.ipv6.conf.all.disable_ipv6=1
 sysctl -w net.ipv6.conf.default.disable_ipv6=1
@@ -224,12 +230,6 @@ wget https://raw.githubusercontent.com/kor8/volt/beta/modul/openvpn.sh
 chmod +x openvpn.sh
 ./openvpn.sh
 rm -f /root/openvpn.sh
-
-#Install Xray
-wget https://raw.githubusercontent.com/kor8/volt/beta/modul/xray.sh
-chmod +x xray.sh
-./xray.sh
-rm -f /root/xray.sh
 
 # Install BadVPN UDPGw
 cd
