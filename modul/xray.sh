@@ -1,3 +1,8 @@
+apt install iptables iptables-persistent -y
+systemctl restart netfilter-persistent
+systemctl enable netfilter-persistent
+netfilter-persistent save
+netfilter-persistent reload
 apt-get install -y lsb-release gnupg2 wget lsof tar unzip curl libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev jq nginx uuid-runtime
 curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh | bash -s -- install
 echo $domain > /usr/local/etc/xray/domain
@@ -24,6 +29,16 @@ touch /iriszz/xray/xray-clients.txt
 sed -i "s/\tinclude \/etc\/nginx\/sites-enabled\/\*;/\t# include \/etc\/nginx\/sites-enabled\/\*;asd/g" /etc/nginx/nginx.conf
 mkdir /etc/systemd/system/nginx.service.d
 printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" | tee /etc/systemd/system/nginx.service.d/override.conf
+iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
+iptables -I INPUT -m state --state NEW -m udp -p udp --dport 443 -j ACCEPT
+iptables-save > /etc/iptables.up.rules
+iptables-restore -t < /etc/iptables.up.rules
+netfilter-persistent save
+netfilter-persistent reload
 systemctl daemon-reload
 systemctl restart nginx
 systemctl restart xray
+
+cd /usr/bin/
+wget -O menu-xtls "https://raw.githubusercontent.com/kor8/volt/beta/script2/menu-xray.sh"
+chmod +x menu-xtls
