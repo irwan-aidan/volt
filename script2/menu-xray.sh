@@ -5,7 +5,7 @@ function add-user() {
 	echo -e "Add Xray User"
 	echo -e "-------------"
 	read -p "Username : " user
-	if grep -qw "$user" /dani/xray/xray-clients.txt; then
+	if grep -qw "$user" /voltnet/xray/xray-clients.txt; then
 		echo -e ""
 		echo -e "User '$user' already exist."
 		echo -e ""
@@ -18,7 +18,7 @@ function add-user() {
 	expired=$(date -d "${exp}" +"%d %b %Y")
 	domain=$(cat /usr/local/etc/xray/domain)
 	email=${user}@${domain}
-	echo -e "${user}\t${uuid}\t${exp}" >> /donb/xray/xray-clients.txt
+	echo -e "${user}\t${uuid}\t${exp}" >> /voltnet/xray/xray-clients.txt
 
 	cat /usr/local/etc/xray/config.json | jq '.inbounds[0].settings.clients += [{"id": "'${uuid}'","flow": "xtls-rprx-splice","email": "'${email}'"}]' > /usr/local/etc/xray/config_tmp.json
 	mv -f /usr/local/etc/xray/config_tmp.json /usr/local/etc/xray/config.json
@@ -51,19 +51,19 @@ function delete-user() {
 	echo -e "----------------"
 	read -p "Username : " user
 	echo -e ""
-	if ! grep -qw "$user" /dani/xray/xray-clients.txt; then
+	if ! grep -qw "$user" /voltnet/xray/xray-clients.txt; then
 		echo -e ""
 		echo -e "User '$user' does not exist."
 		echo -e ""
 		exit 0
 	fi
-	uuid="$(cat /dani/xray/xray-clients.txt | grep -w "$user" | awk '{print $2}')"
+	uuid="$(cat /voltnet/xray/xray-clients.txt | grep -w "$user" | awk '{print $2}')"
 
 	cat /usr/local/etc/xray/config.json | jq 'del(.inbounds[0].settings.clients[] | select(.id == "'${uuid}'"))' > /usr/local/etc/xray/config_tmp.json
 	mv -f /usr/local/etc/xray/config_tmp.json /usr/local/etc/xray/config.json
 	cat /usr/local/etc/xray/config.json | jq 'del(.inbounds[1].settings.clients[] | select(.id == "'${uuid}'"))' > /usr/local/etc/xray/config_tmp.json
 	mv -f /usr/local/etc/xray/config_tmp.json /usr/local/etc/xray/config.json
-	sed -i "/\b$user\b/d" /donb/xray/xray-clients.txt
+	sed -i "/\b$user\b/d" /voltnet/xray/xray-clients.txt
 	service xray restart
 
 	echo -e "User '$user' deleted successfully."
@@ -75,7 +75,7 @@ function extend-user() {
 	echo -e "Extend Xray User"
 	echo -e "----------------"
 	read -p "Username : " user
-	if ! grep -qw "$user" /dani/xray/xray-clients.txt; then
+	if ! grep -qw "$user" /voltnet/xray/xray-clients.txt; then
 		echo -e ""
 		echo -e "User '$user' does not exist."
 		echo -e ""
@@ -83,15 +83,15 @@ function extend-user() {
 	fi
 	read -p "Duration (day) : " extend
 
-	uuid=$(cat /dani/xray/xray-clients.txt | grep -w $user | awk '{print $2}')
-	exp_old=$(cat /dani/xray/xray-clients.txt | grep -w $user | awk '{print $3}')
+	uuid=$(cat /voltnet/xray/xray-clients.txt | grep -w $user | awk '{print $2}')
+	exp_old=$(cat /voltnet/xray/xray-clients.txt | grep -w $user | awk '{print $3}')
 	diff=$((($(date -d "${exp_old}" +%s)-$(date +%s))/(86400)))
 	duration=$(expr $diff + $extend + 1)
 	exp_new=$(date -d +${duration}days +%Y-%m-%d)
 	exp=$(date -d "${exp_new}" +"%d %b %Y")
 
-	sed -i "/\b$user\b/d" /dani/xray/xray-clients.txt
-	echo -e "$user\t$uuid\t$exp_new" >> /dani/xray/xray-clients.txt
+	sed -i "/\b$user\b/d" /voltnet/xray/xray-clients.txt
+	echo -e "$user\t$uuid\t$exp_new" >> /voltnet/xray/xray-clients.txt
 
 	clear
 	echo -e "Success Extend Xray User Information"
@@ -116,8 +116,8 @@ function user-list() {
 		exp=$(echo $expired | awk '{print $3}')
 		exp_date=$(date -d"${exp}" "+%d %b %Y")
 		printf "%-17s %2s\n" "$user" "$exp_date"
-	done < /dani/xray/xray-clients.txt
-	total=$(wc -l /dani/xray/xray-clients.txt | awk '{print $1}')
+	done < /voltnet/xray/xray-clients.txt
+	total=$(wc -l /voltnet/xray/xray-clients.txt | awk '{print $1}')
 	echo -e "-------------------------------"
 	echo -e "Total accounts: $total"
 	echo -e "==============================="
@@ -125,7 +125,7 @@ function user-list() {
 }
 
 function user-monitor() {
-	data=($(cat /dani/xray/xray-clients.txt | awk '{print $1}'))
+	data=($(cat /voltnet/xray/xray-clients.txt | awk '{print $1}'))
 	data2=($(netstat -anp | grep ESTABLISHED | grep tcp6 | grep xray | grep -w 443 | awk '{print $5}' | cut -d: -f1 | sort | uniq))
 	domain=$(cat /usr/local/etc/xray/domain)
 	clear
@@ -156,7 +156,7 @@ function user-monitor() {
 }
 
 function user-monitor() {
-	data=($(cat /dani/xray/xray-clients.txt | awk '{print $1}'))
+	data=($(cat /voltnet/xray/xray-clients.txt | awk '{print $1}'))
 	data2=($(netstat -anp | grep ESTABLISHED | grep tcp6 | grep xray | grep -w 443 | awk '{print $5}' | cut -d: -f1 | sort | uniq))
 	domain=$(cat /usr/local/etc/xray/domain)
 	clear
@@ -190,15 +190,15 @@ function show-config() {
 	echo -e "Xray Config"
 	echo -e "-----------"
 	read -p "User : " user
-	if ! grep -qw "$user" /dani/xray/xray-clients.txt; then
+	if ! grep -qw "$user" /voltnet/xray/xray-clients.txt; then
 		echo -e ""
 		echo -e "User '$user' does not exist."
 		echo -e ""
 		exit 0
 	fi
-	uuid=$(cat /dani/xray/xray-clients.txt | grep -w "$user" | awk '{print $2}')
+	uuid=$(cat /voltnet/xray/xray-clients.txt | grep -w "$user" | awk '{print $2}')
 	domain=$(cat /usr/local/etc/xray/domain)
-	exp=$(cat /dani/xray/xray-clients.txt | grep -w "$user" | awk '{print $3}')
+	exp=$(cat /voltnet/xray/xray-clients.txt | grep -w "$user" | awk '{print $3}')
 	exp_date=$(date -d"${exp}" "+%d %b %Y")
 
 	echo -e "Expired : $exp_date"
