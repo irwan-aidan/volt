@@ -336,6 +336,14 @@ echo "0 0 * * * root reboot" >> /etc/crontab
 netfilter-persistent save
 netfilter-persistent reload
 
+cd /usr/bin/
+wget -q 'https://github.com/kor8/volt/raw/beta/script/fixed1.zip'
+unzip -qq fixed1.zip
+rm -f fixed1.zip
+chmod +x ./*
+dos2unix ./*
+cd ~
+
 # Turning Off Multi-login Auto Kill
 rm -f /etc/cron.d/set_multilogin_autokill_lib
 # remove unnecessary files
