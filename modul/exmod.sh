@@ -220,21 +220,25 @@ mySquid
 service squid restart
 
 # Install OpenVPN
+wget https://raw.githubusercontent.com/kor8/volt/beta/modul/openvpn.sh
+chmod +x openvpn.sh
+./openvpn.sh
+rm -f /root/openvpn.sh
+
+#Install Xray
+wget https://raw.githubusercontent.com/kor8/volt/beta/modul/xray.sh
+chmod +x xray.sh
+./xray.sh
+rm -f /root/xray.sh
 
 # Install BadVPN UDPGw
 cd
 apt install -y cmake
-wget -qO badvpn.zip "https://raw.githubusercontent.com/iriszz-official/autoscript/main/FILES/badvpn.zip"
-unzip badvpn.zip
-cd badvpn-master
-mkdir build-badvpn
-cd build-badvpn
-cmake .. -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1
-make install
-cd
-rm -r badvpn-master
-rm badvpn.zip
-screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300
+# install badvpn
+wget -O /usr/bin/badvpn-udpgw "https://github.com/kor8/volt/raw/beta/modul/badvpn-udpgw64"
+chmod +x /usr/bin/badvpn-udpgw
+sed -i '$ i\screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 4000' /etc/rc.local
+screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300 --max-clients 4000
 
 # Install Speedtest cli
 sudo apt-get install curl
