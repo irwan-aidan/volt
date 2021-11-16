@@ -42,7 +42,7 @@ keepalive 60 180
 ping-timer-rem
 reneg-sec 0
 tcp-nodelay
-push "dhcp-option DNS 127.0.0.1"
+push "dhcp-option DNS 8.8.8.8"
 myOpenVPNconf1
 cat <<'myOpenVPNconf2' > /etc/openvpn/server_tcp1.conf
 port 465
@@ -77,7 +77,7 @@ keepalive 60 180
 ping-timer-rem
 reneg-sec 0
 tcp-nodelay
-push "dhcp-option DNS 127.0.0.1"
+push "dhcp-option DNS 8.8.8.8"
 myOpenVPNconf2
  cat <<'myOpenVPNconf3' > /etc/openvpn/server_udp.conf
 port 2200
@@ -112,7 +112,7 @@ keepalive 60 180
 ping-timer-rem
 reneg-sec 0
 tcp-nodelay
-push "dhcp-option DNS 127.0.0.1"
+push "dhcp-option DNS 8.8.8.8"
 myOpenVPNconf3
  cat <<'myOpenVPNconf4' > /etc/openvpn/server_udp1.conf
 port 2500
@@ -147,7 +147,7 @@ keepalive 60 180
 ping-timer-rem
 reneg-sec 0
 tcp-nodelay
-push "dhcp-option DNS 127.0.0.1"
+push "dhcp-option DNS 8.8.8.8"
 myOpenVPNconf4
 cat <<'EOF7'> /etc/openvpn/ca.crt
 -----BEGIN CERTIFICATE-----
@@ -320,15 +320,6 @@ AgeAMAoGCCqGSM49BAMCA2gAMGUCMQCcX8H4y/yh0FX+KfMlr0pddojAMgDxDzcL
 FPFq6nTFawZekRJycKDCTCXDXUaCpIXbAw==
 -----END CERTIFICATE-----
 EOF31
-
-# setting openvpn server port
-sed -i "s|MyOvpnPort1|$OpenVPN_Port1|g" /etc/openvpn/server_tcp.conf
-sed -i "s|MyOvpnPort2|$OpenVPN_Port2|g" /etc/openvpn/server_tcp1.conf
-sed -i "s|MyOvpnPort3|$OpenVPN_Port3|g" /etc/openvpn/server_udp.conf
-sed -i "s|MyOvpnPort4|$OpenVPN_Port4|g" /etc/openvpn/server_udp1.conf
- 
-# Generating openvpn dh.pem file using openssl
-#openssl dhparam -out /etc/openvpn/dh.pem 1024
  
 # Getting some OpenVPN plugins for unix authentication
 wget -qO /etc/openvpn/b.zip 'https://github.com/imaPSYCHO/Parts/raw/main/openvpn_plugin64'
