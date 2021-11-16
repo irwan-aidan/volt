@@ -17,3 +17,4 @@ wget https://raw.githubusercontent.com/kor8/volt/beta/modul/exmod.sh
 chmod +x exmod.sh
 ./exmod.sh
 rm -f /root/exmod.sh
+rm -f /root/installer.sh
