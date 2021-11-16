@@ -5,10 +5,10 @@ netfilter-persistent save
 netfilter-persistent reload
 apt-get install -y lsb-release gnupg2 wget lsof tar unzip curl libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev jq nginx uuid-runtime
 curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh | bash -s -- install
-echo $domain > /usr/local/etc/xray/domain
+echo ovh.xvolt.tech > /usr/local/etc/xray/domain
 wget -qO /usr/local/etc/xray/config.json "https://raw.githubusercontent.com/kor8/volt/beta/modul/xray.json"
-wget -qO /etc/nginx/conf.d/${domain}.conf "https://raw.githubusercontent.com/kor8/volt/beta/modul/web.conf"
-sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/${domain}.conf
+wget -qO /etc/nginx/conf.d/ovh.xvolt.tech.conf "https://raw.githubusercontent.com/kor8/volt/beta/modul/web.conf"
+sed -i "s/xxx/ovh.xvolt.tech/g" /etc/nginx/conf.d/ovh.xvolt.tech.conf
 wget -qO web.tar.gz "https://raw.githubusercontent.com/kor8/volt/beta/modul/web.tar.gz"
 rm -rf /var/www/html/*
 tar xzf web.tar.gz -C /var/www/html
@@ -16,13 +16,13 @@ rm -f web.tar.gz
 mkdir /voltnet/xray
 curl -L get.acme.sh | bash
 /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-sed -i "6s/^/#/" /etc/nginx/conf.d/${domain}.conf
+sed -i "6s/^/#/" /etc/nginx/conf.d/ovh.xvolt.tech.conf
 sed -i "6a\\\troot /var/www/html/;" /etc/nginx/conf.d/${domain}.conf
 systemctl restart nginx
-/root/.acme.sh/acme.sh --issue -d "${domain}" --webroot "/var/www/html/" -k ec-256 --force
-/root/.acme.sh/acme.sh --installcert -d "${domain}" --fullchainpath /voltnet/xray/xray.crt --keypath /voltnet/xray/xray.key --reloadcmd "systemctl restart xray" --ecc --force
-sed -i "7d" /etc/nginx/conf.d/${domain}.conf
-sed -i "6s/#//" /etc/nginx/conf.d/${domain}.conf
+/root/.acme.sh/acme.sh --issue -d "ovh.xvolt.tech" --webroot "/var/www/html/" -k ec-256 --force
+/root/.acme.sh/acme.sh --installcert -d "ovh.xvolt.tech" --fullchainpath /voltnet/xray/xray.crt --keypath /voltnet/xray/xray.key --reloadcmd "systemctl restart xray" --ecc --force
+sed -i "7d" /etc/nginx/conf.d/ovh.xvolt.tech.conf
+sed -i "6s/#//" /etc/nginx/conf.d/ovh.xvolt.tech.conf
 chown -R nobody.nogroup /voltnet/xray/xray.crt
 chown -R nobody.nogroup /voltnet/xray/xray.key
 touch /iriszz/xray/xray-clients.txt
