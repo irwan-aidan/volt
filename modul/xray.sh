@@ -1,4 +1,4 @@
-apt install iptables iptables-persistent -y
+apt install iptables iptables-persistent socat -y
 systemctl restart netfilter-persistent
 systemctl enable netfilter-persistent
 netfilter-persistent save
